@@ -10,6 +10,8 @@ public class Heapsort {
      * @return sorted array
      */
     public static int[] heapSort(int[] ary) {
+        if (ary == null)
+            return null;
         ary = heapify(ary);
         int end = ary.length - 1;
 

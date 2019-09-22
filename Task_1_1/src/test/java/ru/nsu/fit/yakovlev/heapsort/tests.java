@@ -42,5 +42,8 @@ public class tests {
         Assert.assertArrayEquals(sorted,Heapsort.heapSort(ary));
     }
 
-
+    @Test
+    public void test22() {
+        Assert.assertEquals(null, Heapsort.heapSort(null));
+    }
 }
