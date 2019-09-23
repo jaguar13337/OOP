@@ -2,25 +2,16 @@ package ru.nsu.fit.g18214.yakovlev;
 
 import java.util.Iterator;
 
-public class Stack implements Iterable<Object> {
-    private Object[] stack;
+public class Stack<T>  implements Iterable<T> {
+
+    private Element<T> head;
     private int currElem;
 
     /**
-     * Generates stack with capacity = 100. If you don't know size of your stack
+     * Generates empty stack.
      */
     public Stack() {
-        this.stack = new Object[100];
-        this.currElem = 0;
-    }
-
-
-    /**
-     * Generates stack with given capacity. If you exactly know, which capacity you want
-     * @param capacity started capacity
-     */
-    public Stack(int capacity) {
-        this.stack = new Object[capacity];
+        this.head  = new Element<T>(null);
         this.currElem = 0;
     }
 
@@ -28,13 +19,13 @@ public class Stack implements Iterable<Object> {
      * Pushing current object into the stack.
      * @param object which object you want to push into the stack
      */
-    public void push(Object object) {
-        if (currElem == stack.length) {
-            Object[] newStack = new Object[stack.length * 2];
-            System.arraycopy(stack,0,newStack,0,stack.length);
-            stack = newStack;
-        }
-        stack[currElem++] = object;
+    public void push(T object) {
+        Element<T> n = new Element<T>(object);
+        Element<T> tmp = head;
+        while(tmp.getNext() != null)
+            tmp = tmp.getNext();
+        tmp.setNext(n);
+        currElem++;
     }
 
     /**
@@ -42,17 +33,22 @@ public class Stack implements Iterable<Object> {
      * @return Last object, which was pushed
      * @throws StackException If there's no object to pop - throws exception, that it is empty
      */
-    public Object pop() throws StackException {
+    public T pop() throws StackException {
         if (currElem == 0)
             throw new StackException("Stack is empty");
         else {
             currElem--;
-            return stack[currElem];
+            Element<T> tmp = head;
+            while (tmp.getNext().getNext() != null)
+                tmp = tmp.getNext();
+            Element<T> ret = tmp.getNext();
+            tmp.setNext(null);
+            return ret.getVal();
         }
     }
 
     /**
-     * Returns count of elements on stack
+     * return count of elements in the stack
      * @return count of elements
      */
     public int count() {
@@ -60,8 +56,8 @@ public class Stack implements Iterable<Object> {
     }
 
     @Override
-    public Iterator<Object> iterator() {
-        return new Iterator<Object>() {
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
             @Override
             public boolean hasNext() {
                 if (count() > 0)
@@ -70,7 +66,7 @@ public class Stack implements Iterable<Object> {
             }
 
             @Override
-            public Object next() {
+            public T next() {
                 return pop();
             }
         };
