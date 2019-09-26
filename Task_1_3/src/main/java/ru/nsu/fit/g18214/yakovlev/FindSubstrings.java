@@ -7,12 +7,11 @@ import java.util.Vector;
 
 public class FindSubstrings {
     /**
-     * Find all occurrences of string 'find' in the text 'text'.
-     * @param fileName, where you want to find all occurrences of String 'find'.
+     * Find all occurrences of string 'find' in the file 'fileName'.
+     * @param fileName, name of file to open.
      * @param find a substring that you want to find
-     * @return
+     * @return int array with all occurrences. Can be empty.
      */
-
     public static int[] findSubstrings(String fileName, String find) throws IOException{
         char[] text = new char[find.length() * 2];
         Vector<Integer> ans = new Vector<Integer>(0);
