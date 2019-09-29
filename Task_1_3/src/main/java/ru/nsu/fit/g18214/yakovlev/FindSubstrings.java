@@ -15,17 +15,21 @@ public class FindSubstrings {
     public static int[] findSubstrings(String fileName, String find) throws IOException{
         char[] text = new char[find.length() * 2];
         Vector<Integer> ans = new Vector<Integer>(0);
+
         File file = new File(fileName);
-        BufferedReader br = null;
-        br = new BufferedReader(new FileReader(file));
-        int len = 0;
-        len = br.read(text, 0, find.length() * 2);
+        BufferedReader br = new BufferedReader(new FileReader(file));
+
+        int len = br.read(text, 0, find.length() * 2);
         int offset = 0;
+
         while (len != -1) {
             String concat = find + "$" + (new String(text));
+
             int l = concat.length();
             int Z[] = new int[l];
+
             getZ(concat, Z);
+
             for (int i = 0; i < l; ++i) {
                 if (Z[i] == find.length()) {
                     ans.add(i - find.length() - 1 + offset);
@@ -33,17 +37,23 @@ public class FindSubstrings {
                         text[j] = '$';
                 }
             }
+
             for (int i = 0; i < find.length(); i++)
                 text[i] = text[i + find.length()];
+
             len = br.read(text, find.length(), find.length());
+
             if (len < find.length())
                 for (int i = find.length() + len; i < find.length()*2; i++)
                     text[i] = '$';
+
             offset += find.length();
         }
         int[] array = new int[ans.size()];
+
         for (int i = 0; i < ans.size(); i++)
             array[i] = ans.get(i);
+
         return array;
     }
 

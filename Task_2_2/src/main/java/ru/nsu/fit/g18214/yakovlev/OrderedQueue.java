@@ -4,10 +4,18 @@ public class OrderedQueue<K extends Comparable<K>,T extends Comparable<T>> {
 
     private Element<K,T> head;
 
+    /**
+     * Generates new empty queue
+     */
     public OrderedQueue() {
         this.head = new Element<>(null,null);
     }
 
+    /**
+     * Add an element to the queue
+     * @param key which is determine place of element
+     * @param value element value
+     */
     public void insert(K key, T value) {
         Element <K,T> element = new Element<>(key, value);
         Element <K,T> tmp = head;
@@ -17,6 +25,10 @@ public class OrderedQueue<K extends Comparable<K>,T extends Comparable<T>> {
         tmp.setNext(element);
     }
 
+    /**
+     * returns element with highest key
+     * @return T value of element
+     */
     public T extractMax() {
         Element <K,T> tmp = head.getNext();
         if(tmp == null)

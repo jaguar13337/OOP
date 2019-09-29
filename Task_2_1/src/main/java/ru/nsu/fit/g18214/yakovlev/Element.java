@@ -17,7 +17,9 @@ class Element<T> {
     Element<T> getNext() {
         return next;
     }
+
     T getVal() {
         return val;
     }
+
 }
