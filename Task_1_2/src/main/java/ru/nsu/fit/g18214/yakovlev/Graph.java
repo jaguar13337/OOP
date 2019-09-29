@@ -1,16 +1,20 @@
 package ru.nsu.fit.g18214.yakovlev;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
-public class Graph {
-    private LinkedList<Triple> graph;
+/**
+ * This is a simple representation of graph.
+ */
+public class Graph implements Iterable<Edge> {
+    private LinkedList<Edge> graph;
     private int vertexCnt;
     /**
      * Generate a graph with entered length
      * @param cnt a count of vertexes in the graph
      */
     public Graph(int cnt) {
-        this.graph = new LinkedList<Triple>();
+        this.graph = new LinkedList<Edge>();
         this.vertexCnt = cnt;
     }
 
@@ -21,31 +25,36 @@ public class Graph {
      * @param val edge len
      */
     public void addEdge(int from, Integer to, Integer val) {
-        Triple triple = new Triple(from,to, val);
-        graph.add(triple);
+        Edge edge = new Edge(from,to, val);
+        graph.add(edge);
     }
 
+
     /**
-     * This function allows you to find a shortest path in the graph.
-     * @param a from this point you want to find a shortest path
-     * @param b to this point you want to find a shortest path
-     * @return int shortest path
+     * returns a count of vertexes in graph.
+     * @return cnt of vertexes
      */
-    public int findShortestPath(int a, int b) {
-        int[] ary = new int[vertexCnt];
-        for (int i = 0; i<vertexCnt; i++)
-            ary[i] = Integer.MAX_VALUE;
-        ary[a] = 0;
-        while(true) {
-            boolean any = false;
-            for (Triple j: graph)
-                if (ary[j.getFrom()] < Integer.MAX_VALUE)
-                    if (ary[j.getTo()] > ary[j.getFrom()] + j.getLen()) {
-                        ary[j.getTo()] = ary[j.getFrom()] + j.getLen();
-                        any = true;
-                    }
-            if (!any)  break;
+    public int getVertexCnt() {
+        return vertexCnt;
+    }
+
+
+    /**
+     * returns a len of edge from A to B. If there's no edge -> returns -1
+     * @param from vertex from
+     * @param to vertex to
+     * @return int = len of edge.
+     */
+    public int getEdgeLen(int from, int to) {
+        for (Edge i: graph) {
+            if (i.getFrom() == from && i.getTo() == to)
+                return i.getLen();
         }
-        return ary[b];
+        return -1;
+    }
+
+    @Override
+    public Iterator<Edge> iterator() {
+        return graph.iterator();
     }
 }

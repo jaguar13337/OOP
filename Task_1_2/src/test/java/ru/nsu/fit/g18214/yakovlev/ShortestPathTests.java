@@ -12,7 +12,7 @@ public class ShortestPathTests {
         graph.addEdge(0,1,2);
         graph.addEdge(1,2,3);
         graph.addEdge(2,3,4);
-        Assert.assertEquals(2+3+4, graph.findShortestPath(a,b));
+        Assert.assertEquals(2+3+4, ShortestPath.findShortestPath(graph, a, b));
     }
 
     @Test
@@ -24,7 +24,7 @@ public class ShortestPathTests {
         graph.addEdge(1,2,3);
         graph.addEdge(2,3,4);
         graph.addEdge(0,3,8);
-        Assert.assertEquals(8,graph.findShortestPath(a,b));
+        Assert.assertEquals(8, ShortestPath.findShortestPath(graph, a, b));
     }
 
     @Test
@@ -36,6 +36,6 @@ public class ShortestPathTests {
         graph.addEdge(1,2,3);
         graph.addEdge(2,3,4);
         graph.addEdge(0,2,4);
-        Assert.assertEquals(8, graph.findShortestPath(a,b));
+        Assert.assertEquals(8, ShortestPath.findShortestPath(graph, a, b));
     }
 }

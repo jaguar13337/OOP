@@ -1,25 +1,25 @@
 package ru.nsu.fit.g18214.yakovlev;
 
-class Triple {
+public class Edge {
     private int from;
     private int to;
     private int len;
 
-    Triple(int from,int to, int len) {
+    public Edge(int from,int to, int len) {
         this.from = from;
         this.to = to;
         this.len = len;
     }
 
-    int getFrom() {
+    public int getFrom() {
         return from;
     }
 
-    int getTo() {
+    public int getTo() {
         return to;
     }
 
-    int getLen() {
+    public int getLen() {
         return len;
     }
 }
