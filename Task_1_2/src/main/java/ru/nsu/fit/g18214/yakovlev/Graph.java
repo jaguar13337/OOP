@@ -1,60 +1,32 @@
 package ru.nsu.fit.g18214.yakovlev;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
-/**
- * This is a simple representation of graph.
- */
-public class Graph implements Iterable<Edge> {
-    private LinkedList<Edge> graph;
-    private int vertexCnt;
+public interface Graph {
     /**
-     * Generate a graph with entered length
-     * @param cnt a count of vertexes in the graph
+     * Add an edge to the graph from vertex 'from' to vertex 'to' with len 'len'
+     * @param from start vertex of edge
+     * @param to end vertex of edge
+     * @param len edge len
      */
-    public Graph(int cnt) {
-        this.graph = new LinkedList<Edge>();
-        this.vertexCnt = cnt;
-    }
+    void addEdge(int from, int to, int len);
 
     /**
-     * Add an edge to the graph
-     * @param from edge from vertex "from"
-     * @param to edge to vertex "to"
-     * @param val edge len
+     * Returns a count of vertexes
+     * @return int cnt of vertexes in graph
      */
-    public void addEdge(int from, Integer to, Integer val) {
-        Edge edge = new Edge(from,to, val);
-        graph.add(edge);
-    }
-
+    int getVertexCnt();
 
     /**
-     * returns a count of vertexes in graph.
-     * @return cnt of vertexes
+     * Added an array of shortest paths from vertex a to an A.
+     * Array of shortest paths must be cleared, if you add a new edge after it's counting
+     * @param a vertex from which we already count all shortest paths to all other vertexes
+     * @param paths an array of shortest paths
      */
-    public int getVertexCnt() {
-        return vertexCnt;
-    }
-
+    void addShortestPathsFromVertex(int a, int[] paths);
 
     /**
-     * returns a len of edge from A to B. If there's no edge -> returns -1
-     * @param from vertex from
-     * @param to vertex to
-     * @return int = len of edge.
+     * Returns an array of shortest paths from vertex a
+     * @param a vertex, from which we want to get an array of shortest paths
+     * @return an int array of shortest paths
      */
-    public int getEdgeLen(int from, int to) {
-        for (Edge i: graph) {
-            if (i.getFrom() == from && i.getTo() == to)
-                return i.getLen();
-        }
-        return -1;
-    }
-
-    @Override
-    public Iterator<Edge> iterator() {
-        return graph.iterator();
-    }
+    int[] getShortestPaths(int a);
 }

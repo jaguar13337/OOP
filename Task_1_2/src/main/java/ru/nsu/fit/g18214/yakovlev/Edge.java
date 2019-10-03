@@ -5,7 +5,7 @@ public class Edge {
     private int to;
     private int len;
 
-    public Edge(int from,int to, int len) {
+    public Edge (int from,int to, int len) {
         this.from = from;
         this.to = to;
         this.len = len;
