@@ -2,22 +2,27 @@ package ru.nsu.fit.g18214.yakovlev;
 
 import org.apache.commons.math3.exception.NullArgumentException;
 
+/**
+ * A class that finds the shortest path in graph from vertex a to vertex b.
+ */
 public class FordBellman implements ShortestPath {
 
-    private ListedGraph listedGraph;
+    private Graph listedGraph;
     private int[][] shortestPaths = null;
 
-    public FordBellman(ListedGraph listedGraph) throws NullArgumentException {
+
+    public FordBellman(Graph listedGraph) throws NullArgumentException {
         if (listedGraph == null)
             throw new NullArgumentException();
         this.listedGraph = listedGraph;
         this.shortestPaths = new int[listedGraph.getVertexCnt()][];
-        for (int i = 0; i<listedGraph.getVertexCnt(); i++)
+        for (int i = 0; i < listedGraph.getVertexCnt(); i++)
             shortestPaths[i] = null;
     }
 
     /**
      * This function allows you to find a shortest path in the listedGraph.
+     *
      * @param a from this point you want to find a shortest path.
      * @param b to this point you want to find a shortest path.
      * @return int shortest path
@@ -26,26 +31,31 @@ public class FordBellman implements ShortestPath {
         if (a >= listedGraph.getVertexCnt() || b >= listedGraph.getVertexCnt())
             throw new IllegalArgumentException("Argument larger than vertexes count\n");
         else {
-            int[] ary = shortestPaths[a];
-            if (ary == null) {
+            int[] pathsFromA = shortestPaths[a];
+            if (pathsFromA == null) {
                 int vertexCnt = listedGraph.getVertexCnt();
-                ary = new int[vertexCnt];
+                pathsFromA = new int[vertexCnt];
                 for (int i = 0; i < vertexCnt; i++)
-                    ary[i] = Integer.MAX_VALUE;
-                ary[a] = 0;
-                while (true) {
-                    boolean any = false;
-                    for (Edge j : listedGraph)
-                        if (ary[j.getFrom()] < Integer.MAX_VALUE)
-                            if (ary[j.getTo()] > ary[j.getFrom()] + j.getLen()) {
-                                ary[j.getTo()] = ary[j.getFrom()] + j.getLen();
-                                any = true;
+                    pathsFromA[i] = Integer.MAX_VALUE;
+                pathsFromA[a] = 0;
+                boolean any = true;
+                while (any) {
+                    any = false;
+                    for (int from = 0; from < vertexCnt; from++) {
+                        for (int to = 0; to < vertexCnt; to++) {
+                            int len = listedGraph.getEdgeLen(from, to);
+                            if (len != Integer.MAX_VALUE) {
+                                if (pathsFromA[to] > pathsFromA[from] + len) {
+                                    pathsFromA[to] = pathsFromA[from] + len;
+                                    any = true;
+                                }
                             }
-                    if (!any) break;
+                        }
+                    }
+                    shortestPaths[a] = pathsFromA;
                 }
-                shortestPaths[a] = ary;
             }
-            return ary[b];
+            return pathsFromA[b];
         }
     }
 }
