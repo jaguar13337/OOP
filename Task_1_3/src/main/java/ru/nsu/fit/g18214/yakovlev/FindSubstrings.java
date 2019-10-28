@@ -2,25 +2,26 @@ package ru.nsu.fit.g18214.yakovlev;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FindSubstrings {
 
   /**
    * Find all occurrences of string 'subString' in the file 'fileName'.
    *
-   * @param r get an opened reader to read a text
+   * @param reader get an opened reader to read a text
    * @param subString a substring that you want to find
    * @return int array with all occurrences. Can be empty.
    */
-  public static int[] findSubstrings(Reader r, String subString) throws IOException {
+  public static int[] findSubstrings(Reader reader, String subString) throws IOException {
     char[] concat = new char[subString.length() * 3 + 1];
     char[] string = subString.toCharArray();
-    Vector<Integer> ans = new Vector<Integer>(0);
+    List<Integer> ans = new ArrayList<Integer>(0);
     System.arraycopy(string, 0, concat, 0, string.length);
     concat[string.length] = '$';
     int off = string.length + 1;
-    int len = r.read(concat, off, subString.length() * 2);
+    int len = reader.read(concat, off, subString.length() * 2);
 
     int offset = 0;
 
@@ -41,7 +42,7 @@ public class FindSubstrings {
 
       System.arraycopy(concat, subString.length()+off, concat, off, subString.length());
 
-      len = r.read(concat, subString.length()+off, subString.length());
+      len = reader.read(concat, subString.length()+off, subString.length());
 
       if (len < subString.length()) {
         for (int i = subString.length() + len + off; i < subString.length() * 3 + 1; i++) {
