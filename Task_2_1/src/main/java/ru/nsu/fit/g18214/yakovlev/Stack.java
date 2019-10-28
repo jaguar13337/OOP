@@ -5,12 +5,14 @@ import java.util.Iterator;
 public class Stack<T> implements Iterable<T> {
 
   private Element<T> head;
-  private int currElem;
+  private Element<T> currElem;
+  private int count;
 
   /** Generates empty stack. */
   public Stack() {
     this.head = new Element<T>(null);
-    this.currElem = 0;
+    this.currElem = this.head;
+    this.count = 0;
   }
 
   /**
@@ -20,10 +22,10 @@ public class Stack<T> implements Iterable<T> {
    */
   public void push(T object) {
     Element<T> n = new Element<T>(object);
-    Element<T> tmp = head;
-    while (tmp.getNext() != null) tmp = tmp.getNext();
-    tmp.setNext(n);
-    currElem++;
+    n.setPrev(currElem);
+    currElem.setNext(n);
+    currElem = n;
+    count++;
   }
 
   /**
@@ -33,24 +35,12 @@ public class Stack<T> implements Iterable<T> {
    * @throws StackException If there's no object to pop - throws exception, that it is empty
    */
   public T pop() throws StackException {
-    if (currElem == 0) throw new StackException("Stack is empty");
+    if (currElem == head) throw new StackException("Stack is empty");
     else {
-      currElem--;
-      Element<T> tmp = head;
-      while (tmp.getNext().getNext() != null) tmp = tmp.getNext();
-      Element<T> ret = tmp.getNext();
-      tmp.setNext(null);
-      return ret.getVal();
-    }
-  }
-
-  public T popIterable() throws StackException {
-    if (currElem == 0) throw new StackException("Stack is empty");
-    else {
-      Element<T> tmp = head;
-      while (tmp.getNext().getNext() != null) tmp = tmp.getNext();
-      Element<T> ret = tmp.getNext();
-      return ret.getVal();
+      T val = currElem.getVal();
+      currElem = currElem.getPrev();
+      count--;
+      return val;
     }
   }
 
@@ -60,13 +50,14 @@ public class Stack<T> implements Iterable<T> {
    * @return count of elements
    */
   public int count() {
-    return currElem;
+    return count;
   }
 
   @Override
   public Iterator<T> iterator() {
     return new Iterator<T>() {
       int cnt = count();
+      Element<T> elem = currElem;
 
       @Override
       public boolean hasNext() {
@@ -76,10 +67,10 @@ public class Stack<T> implements Iterable<T> {
 
       @Override
       public T next() {
-        Element<T> tmp = head;
-        for (int i = 0; i < cnt; i++) tmp = tmp.getNext();
+        T tmp = elem.getVal();
         cnt--;
-        return tmp.getVal();
+        elem = elem.getPrev();
+        return tmp;
       }
     };
   }
