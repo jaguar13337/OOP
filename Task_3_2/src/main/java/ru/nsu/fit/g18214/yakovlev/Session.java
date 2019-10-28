@@ -29,7 +29,6 @@ class Session {
   }
 
   private void addExam(String nameOfExam, Integer grade) {
-    System.out.println(nameOfExam + " " + grade);
     session.add(new Exam(grade, nameOfExam));
   }
 

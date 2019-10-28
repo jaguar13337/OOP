@@ -1,6 +1,9 @@
 package ru.nsu.fit.g18214.yakovlev;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** This is a grade book realisation on a List of Sessions */
 public class GradebookList implements Gradebook {
@@ -49,7 +52,19 @@ public class GradebookList implements Gradebook {
   @Override
   public boolean canStudentGetRedDiploma() {
     for (Session session : gradebook) if (session.isHasThree()) return false;
-    return getAverageScore() >= 4.75;
+    return getDiplomaAverageScore() >= 4.75;
+  }
+
+  private double getDiplomaAverageScore() {
+    Map<String, Integer> table = new HashMap<>();
+    for(Session session : gradebook)
+      for (Exam exam : session.getSession())
+        table.put(exam.getNameOfExam(), exam.getGrade());
+    List<String> keys = new ArrayList<>(table.keySet());
+    double ans = 0;
+    for (String str : keys)
+      ans += table.get(str);
+    return ans / keys.size();
   }
 
   /**
