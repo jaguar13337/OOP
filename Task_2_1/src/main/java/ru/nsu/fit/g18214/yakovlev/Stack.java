@@ -1,17 +1,16 @@
 package ru.nsu.fit.g18214.yakovlev;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class Stack<T> implements Iterable<T> {
 
-  private Element<T> head;
   private Element<T> currElem;
   private int count;
 
   /** Generates empty stack. */
   public Stack() {
-    this.head = new Element<T>(null);
-    this.currElem = this.head;
+    this.currElem = new Element<T>(null);
     this.count = 0;
   }
 
@@ -35,7 +34,7 @@ public class Stack<T> implements Iterable<T> {
    * @throws StackException If there's no object to pop - throws exception, that it is empty
    */
   public T pop() throws StackException {
-    if (currElem == head) throw new StackException("Stack is empty");
+    if (count == 0) throw new StackException("Stack is empty");
     else {
       T val = currElem.getVal();
       currElem = currElem.getPrev();
@@ -56,19 +55,19 @@ public class Stack<T> implements Iterable<T> {
   @Override
   public Iterator<T> iterator() {
     return new Iterator<T>() {
-      int cnt = count();
       Element<T> elem = currElem;
 
       @Override
       public boolean hasNext() {
-        if (cnt > 0) return true;
-        return false;
+        return elem.getVal() != null;
       }
 
       @Override
       public T next() {
+        if (!hasNext()) {
+          throw new NoSuchElementException();
+        }
         T tmp = elem.getVal();
-        cnt--;
         elem = elem.getPrev();
         return tmp;
       }
