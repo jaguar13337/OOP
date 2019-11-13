@@ -1,11 +1,12 @@
 package ru.nsu.fit.g18214.yakovlev;
 
+import org.apache.commons.math3.exception.NullArgumentException;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class StackTests {
   @Test
-  public void test1() {
+  public void testException() {
     Stack<Integer> stack = new Stack<Integer>();
     stack.push(1);
     stack.push(2);
@@ -24,7 +25,12 @@ public class StackTests {
     } catch (StackException e) {
       exceptionRise = true;
     }
-    Assert.assertEquals(true, exceptionRise);
+    Assert.assertTrue(exceptionRise);
+  }
+
+  @Test
+  public void testIterator() {
+    Stack<Integer> stack = new Stack<Integer>();
     stack = new Stack<Integer>();
     stack.push(1400);
     stack.push(1500);
@@ -38,9 +44,8 @@ public class StackTests {
     }
     Assert.assertEquals((Integer) 1800, stack.pop());
   }
-
   @Test
-  public void test2() {
+  public void testDefaultJob() {
     Stack<String> stack = new Stack<String>();
     stack.push("kek");
     stack.push("lol");
@@ -49,5 +54,17 @@ public class StackTests {
     Assert.assertEquals("arbidol", stack.pop());
     Assert.assertEquals("lol", stack.pop());
     Assert.assertEquals("kek", stack.pop());
+  }
+
+  @Test
+  public void testNull() {
+    Stack<String> stack = new Stack<>();
+    boolean flag = false;
+    try{
+      stack.push(null);
+    } catch (NullArgumentException e) {
+      flag = true;
+    }
+    Assert.assertTrue(flag);
   }
 }

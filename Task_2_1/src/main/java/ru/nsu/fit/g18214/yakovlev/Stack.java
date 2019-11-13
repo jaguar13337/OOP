@@ -2,6 +2,7 @@ package ru.nsu.fit.g18214.yakovlev;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import org.apache.commons.math3.exception.NullArgumentException;
 
 public class Stack<T> implements Iterable<T> {
 
@@ -18,8 +19,11 @@ public class Stack<T> implements Iterable<T> {
    * Pushing current object into the stack.
    *
    * @param object which object you want to push into the stack
+   * object mustn't be null
    */
   public void push(T object) {
+    if (object == null)
+      throw new NullArgumentException();
     Element<T> n = new Element<T>(object);
     n.setPrev(currElem);
     currElem.setNext(n);
