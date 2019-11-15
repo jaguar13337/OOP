@@ -26,7 +26,6 @@ public class Stack<T> implements Iterable<T> {
       throw new NullArgumentException();
     Element<T> n = new Element<T>(object);
     n.setPrev(currElem);
-    currElem.setNext(n);
     currElem = n;
     count++;
   }
@@ -42,7 +41,6 @@ public class Stack<T> implements Iterable<T> {
     else {
       T val = currElem.getVal();
       currElem = currElem.getPrev();
-      currElem.setNext(null);
       count--;
       return val;
     }
