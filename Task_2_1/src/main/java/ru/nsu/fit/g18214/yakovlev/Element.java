@@ -23,10 +23,6 @@ class Element<T> {
     this.next = next;
   }
 
-  Element<T> getNext() {
-    return next;
-  }
-
   T getVal() {
     return val;
   }

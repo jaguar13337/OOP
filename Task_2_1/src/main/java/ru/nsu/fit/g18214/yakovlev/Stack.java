@@ -42,6 +42,7 @@ public class Stack<T> implements Iterable<T> {
     else {
       T val = currElem.getVal();
       currElem = currElem.getPrev();
+      currElem.setNext(null);
       count--;
       return val;
     }
