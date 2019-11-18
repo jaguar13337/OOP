@@ -20,6 +20,11 @@ public class GrigorianCalendar {
     this.date = new Date(day, month, year, dayOfWeek);
   }
 
+  /**
+   * This method returns a WeekDay, which will be after 'days' days
+   * @param days count of days which you want to add
+   * @return WeekDay which will be after 'days' days
+   */
   public WeekDays weekDayAfterNDays(int days) {
     int numCurr = date.DayWeekToInt(date.getDayOfWeek());
     int diff = abs(date.getDay() % 7 - numCurr);
@@ -27,6 +32,14 @@ public class GrigorianCalendar {
     return date.associateDayWeekToInt[last];
   }
 
+  /**
+   * This method returns string in a given format ->
+   * -> "X years Y months Z days have passe since the given date"
+   * @param dayG day, from which you want to count time
+   * @param monthG month
+   * @param yearG year
+   * @return String
+   */
   public String howMuchTimeFromGivenDay(int dayG, int monthG, int yearG) {
     int day = date.getDay() - dayG;
     int month = date.getMonth();
@@ -97,6 +110,13 @@ public class GrigorianCalendar {
     return (firstNum + year % 100 + year % 100 / 4) % 7;
   }
 
+  /**
+   * Returns a day of week of given date
+   * @param day day of given date
+   * @param month month of given date
+   * @param year year of given date
+   * @return Day of week
+   */
   public WeekDays weekDayOfGivenDay(int day, int month, int year) {
     int monthCode = getMonthCode(month);
     int yearCode = getYearCode(year);
@@ -105,6 +125,11 @@ public class GrigorianCalendar {
     return date.associateDayWeekToInt[(day + monthCode + yearCode - 2) % 7];
   }
 
+  /**
+   * Returns a number of month, which will be after 'weekcount' weeks
+   * @param weeksCount count of weeks
+   * @return int number of month
+   */
   public int whichMonthAfterNWeeks(int weeksCount) {
     int days = weeksCount * 7;
     Date date = new Date(this.date.getDay(), this.date.getMonth(), this.date.getYear(), this.date.getDayOfWeek());
@@ -119,6 +144,13 @@ public class GrigorianCalendar {
     return date.getMonth();
   }
 
+  /**
+   * Which method calculate a count of days until given date
+   * @param day Date day
+   * @param month Date month number of month)
+   * @param year Date year
+   * @return int count of days
+   */
   public int daysUntilGivenDate(int day, int month, int year) {
     int days = date.monthToDaysCount() - date.getDay() + day;
     int diffmonths = month - date.getMonth() + 12 * (year - date.getYear());
@@ -135,6 +167,12 @@ public class GrigorianCalendar {
     return days;
   }
 
+  /**
+   * Finds closest date with given day number and WeekDay
+   * @param weekDay Day of the week which we want to find
+   * @param day number of day which we want to find
+   * @return nearest date with given parameters
+   */
   public Date nearestWeekDayWithGivenDayNumber(WeekDays weekDay, int day) {
     int month = date.getMonth();
     int year = date.getYear();
