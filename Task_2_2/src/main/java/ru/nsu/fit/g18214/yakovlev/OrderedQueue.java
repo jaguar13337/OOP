@@ -1,51 +1,40 @@
 package ru.nsu.fit.g18214.yakovlev;
 
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-import java.util.List;
+import java.util.NoSuchElementException;
 
-public class OrderedQueue<K extends Comparable<K>, T extends Comparable<T>> implements Iterable<T> {
+public class OrderedQueue<K extends Comparable<K>, T> implements Iterable<T> {
 
   private Element<K, T> head;
   private int cnt;
 
   /** Generates new empty queue */
   public OrderedQueue() {
-    this.head = new Element<>(null, null);
+    this.head = null;
     this.cnt = 0;
   }
 
   @Override
   public Iterator<T> iterator() {
     return new Iterator<T>() {
-      private int counter = cnt;
-      private int askcount = 0;
-      private List<Element<K, T>> alreadyFinded = new ArrayList<>();
+      private int counter = 0;
 
       @Override
       public boolean hasNext() {
-        return (counter != 0);
+        return (cnt - counter != 0);
       }
 
       @Override
       public T next() {
-        if (askcount + counter != cnt)
-          throw new ConcurrentModificationException("You break the queue");
-        Element<K, T> tmp = head.getNext();
-        Element<K, T> maximal = null;
-        if (!alreadyFinded.contains(tmp))
-            maximal = tmp;
-        while (tmp != null) {
-          if (tmp.compareTo(maximal) > 0 && !alreadyFinded.contains(tmp)) {
-            maximal = tmp;
-          }
-          tmp = tmp.getNext();
+        if (!hasNext()) {
+          throw new NoSuchElementException();
         }
-        alreadyFinded.add(maximal);
-        counter--;
-        askcount++;
-        return maximal.getValue();
+        Element<K,T> elem = head;
+        for (int i = 0; i<counter; i++) {
+          elem = elem.getNext();
+        }
+        counter++;
+        return elem.getValue();
       }
     };
   }
@@ -53,34 +42,42 @@ public class OrderedQueue<K extends Comparable<K>, T extends Comparable<T>> impl
   /**
    * Add an element to the queue
    *
-   * @param key which is determine place of element
+   * @param key which is determine place of element. MUSTN'T BE NULL!!
    * @param value element value
    */
-  public void insert(K key, T value) {
+  public void insert(K key, T value) throws IllegalArgumentException {
+    if (key == null) {
+      throw new IllegalArgumentException();
+    }
     Element<K, T> element = new Element<>(key, value);
-    Element<K, T> tmp = head;
-    while (tmp.getNext() != null) tmp = tmp.getNext();
-    element.setPrev(tmp);
-    tmp.setNext(element);
     cnt++;
+    if (element.compareTo(head) >= 0) {
+      element.setNext(head);
+      head = element;
+      return;
+    }
+    Element<K, T> tmp = head;
+    for (int i = 0; i<cnt-1; i++) {
+      if (element.compareTo(tmp.getNext()) >= 0) {
+        element.setNext(tmp.getNext());
+        tmp.setNext(element);
+      }
+      tmp = tmp.getNext();
+    }
   }
 
   /**
-   * returns element with highest key
+   * returns element with a highest key
    *
    * @return value of element
    */
-  public T extractMax() {
-    if (head.getNext() == null) return null;
-    Element<K, T> tmp = head.getNext();
-    Element<K, T> maximal = tmp;
-    while (tmp != null) {
-      if (maximal.compareTo(tmp) < 0) maximal = tmp;
-      tmp = tmp.getNext();
+  public T extractMax(){
+    if (head == null) {
+      return null;
     }
-    maximal.getPrev().setNext(maximal.getNext());
-    if (maximal.getNext() != null) maximal.getNext().setPrev(maximal.getPrev());
     cnt--;
-    return maximal.getValue();
+    Element<K, T> elem = head;
+    head = head.getNext();
+    return elem.getValue();
   }
 }

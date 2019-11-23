@@ -5,19 +5,26 @@ import org.junit.Test;
 
 public class QueueTests {
   @Test
-  public void test1() {
+  public void testInputNull() {
     OrderedQueue<Integer, String> queue = new OrderedQueue<>();
     queue.insert(10, "собака");
     queue.insert(200, "человек");
     Assert.assertEquals("человек", queue.extractMax());
     queue.insert(5, "птица");
     Assert.assertEquals("собака", queue.extractMax());
+    try{
+      queue.insert(null, "kek");
+      Assert.fail();
+    }
+    catch (IllegalArgumentException e) {
+      Assert.assertTrue(true);
+    }
     Assert.assertEquals("птица", queue.extractMax());
     Assert.assertNull(queue.extractMax());
   }
 
   @Test
-  public void test2() {
+  public void testNull() {
     OrderedQueue<String, Integer> queue = new OrderedQueue<>();
     queue.insert("собака", 10);
     queue.insert("человек", 200);
@@ -29,7 +36,7 @@ public class QueueTests {
   }
 
   @Test
-  public void test3() {
+  public void testIterate() {
     OrderedQueue<String, Integer> queue = new OrderedQueue<>();
     queue.insert("собака", 200);
     queue.insert("человек", 300);
