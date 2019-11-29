@@ -8,7 +8,9 @@ public class OrderedQueue<K extends Comparable<K>, T> implements Iterable<T> {
   private Element<K, T> head;
   private int cnt;
 
-  /** Generates new empty queue */
+  /**
+   * Generates new empty queue
+   */
   public OrderedQueue() {
     this.head = null;
     this.cnt = 0;
@@ -29,8 +31,8 @@ public class OrderedQueue<K extends Comparable<K>, T> implements Iterable<T> {
         if (!hasNext()) {
           throw new NoSuchElementException();
         }
-        Element<K,T> elem = head;
-        for (int i = 0; i<counter; i++) {
+        Element<K, T> elem = head;
+        for (int i = 0; i < counter; i++) {
           elem = elem.getNext();
         }
         counter++;
@@ -44,6 +46,7 @@ public class OrderedQueue<K extends Comparable<K>, T> implements Iterable<T> {
    *
    * @param key which is determine place of element. MUSTN'T BE NULL!!
    * @param value element value
+   * @throws IllegalArgumentException when you put null as a key.
    */
   public void insert(K key, T value) throws IllegalArgumentException {
     if (key == null) {
@@ -57,7 +60,7 @@ public class OrderedQueue<K extends Comparable<K>, T> implements Iterable<T> {
       return;
     }
     Element<K, T> tmp = head;
-    for (int i = 0; i<cnt-1; i++) {
+    for (int i = 0; i < cnt - 1; i++) {
       if (element.compareTo(tmp.getNext()) >= 0) {
         element.setNext(tmp.getNext());
         tmp.setNext(element);
@@ -69,9 +72,9 @@ public class OrderedQueue<K extends Comparable<K>, T> implements Iterable<T> {
   /**
    * returns element with a highest key
    *
-   * @return value of element
+   * @return value of element or null, if queue is empty.
    */
-  public T extractMax(){
+  public T extractMax() {
     if (head == null) {
       return null;
     }
