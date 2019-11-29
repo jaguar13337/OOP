@@ -12,11 +12,10 @@ public class QueueTests {
     Assert.assertEquals("человек", queue.extractMax());
     queue.insert(5, "птица");
     Assert.assertEquals("собака", queue.extractMax());
-    try{
+    try {
       queue.insert(null, "kek");
       Assert.fail();
-    }
-    catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException e) {
       Assert.assertTrue(true);
     }
     Assert.assertEquals("птица", queue.extractMax());
@@ -42,9 +41,9 @@ public class QueueTests {
     queue.insert("человек", 300);
     queue.insert("птица", 100);
     int check = 0;
-    for (Integer val: queue) {
-        Assert.assertEquals((Integer)(300-check), val);
-        check += 100;
+    for (Integer val : queue) {
+      Assert.assertEquals((Integer) (300 - check), val);
+      check += 100;
     }
   }
 }
