@@ -45,18 +45,16 @@ public class TreeTest {
     tree.addElem("FIT");
     tree.addElem("MMF");
     tree.addElem("FEN");
-    int cnt = 0;
-    for (String name: tree) {
-      try {
+    boolean CME = false;
+    try {
+      for (String name : tree) {
         tree.addElem("keklolERROR");
-        Assert.fail();
-      } catch (ConcurrentModificationException e) {
-        Assert.assertTrue(true);
       }
-      cnt++;
+    } catch (ConcurrentModificationException e) {
+      CME = true;
     }
+    Assert.assertTrue(CME);
   }
-
   @Test
   public void testGetSubTree() {
     Tree<String> tree = new Tree<String>("NGU");
