@@ -9,7 +9,7 @@ import ru.nsu.fit.g18214.yakovlev.Tree.Iterate;
 public class TreeTest {
   @Test
   public void testNull() {
-    try{
+    try {
       Tree<String> tree = new Tree<>(null);
       Assert.fail();
     } catch (NullArgumentException e) {
@@ -24,28 +24,33 @@ public class TreeTest {
     tree.addElem("MMF");
     tree.addElem("FEN");
     int cnt = 0;
-    for (String name: tree) {
+    for (String name : tree) {
       switch (cnt) {
         case 0:
-          Assert.assertEquals(name, "NGU"); break;
+          Assert.assertEquals(name, "NGU");
+          break;
         case 1:
-          Assert.assertEquals(name, "FIT"); break;
+          Assert.assertEquals(name, "FIT");
+          break;
         case 2:
-          Assert.assertEquals(name, "MMF"); break;
+          Assert.assertEquals(name, "MMF");
+          break;
         case 3:
-          Assert.assertEquals(name, "FEN"); break;
+          Assert.assertEquals(name, "FEN");
+          break;
       }
       cnt++;
     }
   }
 
   @Test
-  public void testCME() {
+  public void testConcurrentModificationExceptionBFS() {
     Tree<String> tree = new Tree<String>("NGU");
     tree.addElem("FIT");
     tree.addElem("MMF");
     tree.addElem("FEN");
     boolean CME = false;
+    tree.setIterate(Iterate.BFS);
     try {
       for (String name : tree) {
         tree.addElem("keklolERROR");
@@ -55,6 +60,25 @@ public class TreeTest {
     }
     Assert.assertTrue(CME);
   }
+
+  @Test
+  public void testConcurrentModificationExceptionDFS() {
+    Tree<String> tree = new Tree<String>("NGU");
+    tree.addElem("FIT");
+    tree.addElem("MMF");
+    tree.addElem("FEN");
+    boolean CME = false;
+    tree.setIterate(Iterate.DFS);
+    try {
+      for (String name : tree) {
+        tree.addElem("keklolERROR");
+      }
+    } catch (ConcurrentModificationException e) {
+      CME = true;
+    }
+    Assert.assertTrue(CME);
+  }
+
   @Test
   public void testGetSubTree() {
     Tree<String> tree = new Tree<String>("NGU");
@@ -65,30 +89,37 @@ public class TreeTest {
     Tree<String> fit = tree.getSubTree("FIT");
     fit.addElem("Old");
     fit.addElem("New");
-    for (String name: tree) {
+    for (String name : tree) {
       switch (cnt) {
         case 0:
-          Assert.assertEquals(name, "NGU"); break;
+          Assert.assertEquals(name, "NGU");
+          break;
         case 1:
-          Assert.assertEquals(name, "MMF"); break;
+          Assert.assertEquals(name, "MMF");
+          break;
         case 2:
-          Assert.assertEquals(name, "FEN"); break;
+          Assert.assertEquals(name, "FEN");
+          break;
       }
       cnt++;
     }
     cnt = 0;
-    for (String name: fit) {
+    for (String name : fit) {
       switch (cnt) {
         case 0:
-          Assert.assertEquals(name, "FIT"); break;
+          Assert.assertEquals(name, "FIT");
+          break;
         case 1:
-          Assert.assertEquals(name, "Old"); break;
+          Assert.assertEquals(name, "Old");
+          break;
         case 2:
-          Assert.assertEquals(name, "New"); break;
+          Assert.assertEquals(name, "New");
+          break;
       }
       cnt++;
     }
   }
+
   @Test
   public void testAddElemFromGetSubTree() {
     Tree<String> tree = new Tree<>("NGU");
@@ -100,24 +131,31 @@ public class TreeTest {
     fit.addElem("Old");
     fit.addElem("New");
     tree.addSubTree(fit);
-    for (String name: tree) {
+    for (String name : tree) {
       switch (cnt) {
         case 0:
-          Assert.assertEquals(name, "NGU"); break;
+          Assert.assertEquals(name, "NGU");
+          break;
         case 1:
-          Assert.assertEquals(name, "MMF"); break;
+          Assert.assertEquals(name, "MMF");
+          break;
         case 2:
-          Assert.assertEquals(name, "FEN"); break;
+          Assert.assertEquals(name, "FEN");
+          break;
         case 3:
-          Assert.assertEquals(name, "FIT"); break;
+          Assert.assertEquals(name, "FIT");
+          break;
         case 4:
-          Assert.assertEquals(name, "Old"); break;
+          Assert.assertEquals(name, "Old");
+          break;
         case 5:
-          Assert.assertEquals(name, "New"); break;
+          Assert.assertEquals(name, "New");
+          break;
       }
       cnt++;
     }
   }
+
   @Test
   public void testDelete() {
     Tree<String> tree = new Tree<>("NGU");
@@ -130,22 +168,28 @@ public class TreeTest {
     fit.addElem("New");
     tree.addSubTree(fit);
     fit.deleteElem("Old");
-    for (String name: tree) {
+    for (String name : tree) {
       switch (cnt) {
         case 0:
-          Assert.assertEquals(name, "NGU"); break;
+          Assert.assertEquals(name, "NGU");
+          break;
         case 1:
-          Assert.assertEquals(name, "MMF"); break;
+          Assert.assertEquals(name, "MMF");
+          break;
         case 2:
-          Assert.assertEquals(name, "FEN"); break;
+          Assert.assertEquals(name, "FEN");
+          break;
         case 3:
-          Assert.assertEquals(name, "FIT"); break;
+          Assert.assertEquals(name, "FIT");
+          break;
         case 4:
-          Assert.assertEquals(name, "New"); break;
+          Assert.assertEquals(name, "New");
+          break;
       }
       cnt++;
     }
   }
+
   @Test
   public void testDFS() {
     Tree<String> tree = new Tree<>("NGU");
@@ -165,7 +209,7 @@ public class TreeTest {
     mmf.addElem("Mmf prog");
     mmf.addElem("Mmf math");
     tree.addSubTree(mmf);
-    for (String name: tree) {
+    for (String name : tree) {
       switch (cnt) {
         case 0:
           Assert.assertEquals(name, "NGU");
@@ -197,5 +241,91 @@ public class TreeTest {
       }
       cnt++;
     }
+  }
+
+  @Test
+  public void testAddNull() {
+    Tree<String> tree = new Tree<>("NGU");
+    tree.addElem("FIT");
+    tree.addElem("MMF");
+    tree.addElem("FEN");
+    try {
+      tree.addElem(null);
+      Assert.fail();
+    } catch (NullArgumentException e) {
+      Assert.assertTrue(true);
+    }
+  }
+
+  @Test
+  public void testDelNull() {
+    Tree<String> tree = new Tree<>("NGU");
+    tree.addElem("FIT");
+    tree.addElem("MMF");
+    tree.addElem("FEN");
+    try {
+      tree.deleteElem(null);
+      Assert.fail();
+    } catch (NullArgumentException e) {
+      Assert.assertTrue(true);
+    }
+  }
+
+  @Test
+  public void testGetSubTreeNull() {
+    Tree<String> tree = new Tree<>("NGU");
+    tree.addElem("FIT");
+    tree.addElem("MMF");
+    tree.addElem("FEN");
+    try {
+      tree.getSubTree(null);
+      Assert.fail();
+    } catch (NullArgumentException e) {
+      Assert.assertTrue(true);
+    }
+  }
+
+  @Test
+  public void testAddSubTreeNull() {
+    Tree<String> tree = new Tree<>("NGU");
+    tree.addElem("FIT");
+    tree.addElem("MMF");
+    tree.addElem("FEN");
+    try {
+      tree.addSubTree(null);
+      Assert.fail();
+    } catch (NullArgumentException e) {
+      Assert.assertTrue(true);
+    }
+  }
+
+  @Test
+  public void testIterateNull() {
+    Tree<String> tree = new Tree<>("NGU");
+    try {
+      tree.setIterate(null);
+      Assert.fail();
+    } catch (NullArgumentException e) {
+      Assert.assertTrue(true);
+    }
+  }
+
+  @Test
+  public void testNotExistingSubTree() {
+    Tree<String> tree = new Tree<>("NGU");
+    tree.addElem("FIT");
+    tree.addElem("MMF");
+    tree.addElem("FEN");
+    Assert.assertNull(tree.getSubTree("PHYS"));
+  }
+
+  @Test
+  public void tryToDeleteNotExistingArgument() {
+    Tree<String> tree = new Tree<>("NGU");
+    tree.addElem("FIT");
+    tree.addElem("MMF");
+    tree.addElem("FEN");
+    tree.deleteElem("PHYS");
+    Assert.assertTrue(true);
   }
 }

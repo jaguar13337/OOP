@@ -34,9 +34,12 @@ public class Tree<T extends Comparable<T>> implements Iterable<T> {
   }
 
   /**
-   * @param val shouldn't be == null
+   * This is constructor for the tree, which will have root with argument val.
+   *
+   * @param val elem, which will be used as a root for a constructed tree.
+   * @throws NullArgumentException if you put null as a val.
    */
-  public Tree(T val) {
+  public Tree(T val) throws NullArgumentException {
     if (val == null) {
       throw new NullArgumentException();
     }
@@ -55,29 +58,40 @@ public class Tree<T extends Comparable<T>> implements Iterable<T> {
   /**
    * It changes a flag, which is responsible for a way, how tree will be iterate.
    *
-   * @param iterate if you want to iterate as dfs -> set true. bfs -> false
+   * @param iterate how you want to iterate.
+   * @throws NullArgumentException if you put null as an iterate.
    */
-  public void setIterate(Iterate iterate) {
+  public void setIterate(Iterate iterate) throws NullArgumentException {
+    if (iterate == null) {
+      throw new NullArgumentException();
+    }
     this.iterateAs = iterate;
   }
 
   /**
    * Add a son to the current tree.
    *
-   * @param elem An elem, which you want to add. Must not be null
+   * @param elem An elem, which you want to add. Must not be null.
+   * @throws NullArgumentException if you put null as an elem.
    */
-  public void addElem(T elem) {
+  public void addElem(T elem) throws NullArgumentException {
+    if (elem == null) {
+      throw new NullArgumentException();
+    }
     cntOfDiffOper++;
     sons.add(new Tree<>(elem));
   }
-
 
   /**
    * Delete an elem from sons of this tree.
    *
    * @param elem which you want to remove.
+   * @throws NullArgumentException if you put null as an elem.
    */
-  public void deleteElem(T elem) {
+  public void deleteElem(T elem) throws NullArgumentException {
+    if (elem == null) {
+      throw new NullArgumentException();
+    }
     cntOfDiffOper++;
     int i = 0;
     for (Tree<T> son : sons) {
@@ -89,16 +103,17 @@ public class Tree<T extends Comparable<T>> implements Iterable<T> {
     }
   }
 
-
   /**
-   * This method returns a subTree with given elem or null.
-   * Remove it from tree sons.
+   * This method returns a subTree with given elem or null. Remove it from tree sons.
    *
    * @param elem which will be in the root of given subtree.
-   * Or null if there is no elem with given name.
-   * @return Tree with given elem in root.
+   * @return Tree with given elem in root, or null if there is no elem with given name.
+   * @throws NullArgumentException if you put null as an elem.
    */
-  public Tree<T> getSubTree(T elem) {
+  public Tree<T> getSubTree(T elem) throws NullArgumentException {
+    if (elem == null) {
+      throw new NullArgumentException();
+    }
     cntOfDiffOper++;
     int i = 0;
     for (Tree<T> el : sons) {
@@ -115,8 +130,12 @@ public class Tree<T extends Comparable<T>> implements Iterable<T> {
    * This method add a subTree to the current tree sons.
    *
    * @param subTree which we want to add.
+   * @throws NullArgumentException if you put null as a subtree.
    */
-  public void addSubTree(Tree<T> subTree) {
+  public void addSubTree(Tree<T> subTree) throws NullArgumentException {
+    if (subTree == null) {
+      throw new NullArgumentException();
+    }
     cntOfDiffOper++;
     sons.add(new Tree<>(subTree));
   }
@@ -125,7 +144,7 @@ public class Tree<T extends Comparable<T>> implements Iterable<T> {
     return sons;
   }
 
-  private Iterator<T> dfs() {
+  private Iterator<T> dfs() throws ConcurrentModificationException {
     return new Iterator<>() {
       private Stack<Tree<T>> stack = new Stack<>();
       private boolean firstStep = true;
@@ -138,8 +157,9 @@ public class Tree<T extends Comparable<T>> implements Iterable<T> {
 
       @Override
       public T next() {
-        if (save != cntOfDiffOper)
+        if (save != cntOfDiffOper) {
           throw new ConcurrentModificationException();
+        }
         if (firstStep) {
           firstStep = false;
           for (int j = sons.size() - 1; j >= 0; j--) {
@@ -156,8 +176,7 @@ public class Tree<T extends Comparable<T>> implements Iterable<T> {
     };
   }
 
-
-  private Iterator<T> bfs() {
+  private Iterator<T> bfs() throws ConcurrentModificationException {
     return new Iterator<>() {
       private List<Tree<T>> queue = new ArrayList<>();
       private boolean firstStep = true;
@@ -170,8 +189,9 @@ public class Tree<T extends Comparable<T>> implements Iterable<T> {
 
       @Override
       public T next() {
-        if (save != cntOfDiffOper)
+        if (save != cntOfDiffOper) {
           throw new ConcurrentModificationException();
+        }
         if (firstStep) {
           firstStep = false;
           queue.addAll(sons);
@@ -186,16 +206,17 @@ public class Tree<T extends Comparable<T>> implements Iterable<T> {
   }
 
   /**
-   * This method returns an Iterator bases on a value 'iterateAsDfs'
+   * This method returns an Iterator bases on a value 'iterateAs'.
    *
-   * @return If iterateAsDfs is set, returns an Iterator DFS, otherwise - BFS.
+   * @return If iterateAs equivalent to Iterator.DFS -> returns DFS. If iterateAs equivalent to
+   *     Iterator.BFS -> returns BFS.
    */
   @Override
   @NonNull
-  public Iterator<T> iterator() {
-    if (iterateAs == Iterate.DFS)
+  public Iterator<T> iterator() throws ConcurrentModificationException {
+    if (iterateAs == Iterate.DFS) {
       return dfs();
-    else {
+    } else {
       return bfs();
     }
   }
