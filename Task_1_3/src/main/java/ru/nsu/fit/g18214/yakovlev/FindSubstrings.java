@@ -1,85 +1,91 @@
 package ru.nsu.fit.g18214.yakovlev;
 
-import java.io.*;
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.Vector;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FindSubstrings {
-    /**
-     * Find all occurrences of string 'find' in the file 'fileName'.
-     * @param fileName, name of file to open.
-     * @param find a substring that you want to find
-     * @return int array with all occurrences. Can be empty.
-     */
-    public static int[] findSubstrings(String fileName, String find) throws IOException{
-        char[] text = new char[find.length() * 2];
-        Vector<Integer> ans = new Vector<Integer>(0);
 
-        File file = new File(fileName);
-        BufferedReader br = new BufferedReader(new FileReader(file));
+  /**
+   * Find all occurrences of string 'subString' in the file 'fileName'.
+   *
+   * @param reader get an opened reader to read a text
+   * @param subString a substring that you want to find
+   * @return int array with all occurrences. Can be empty.
+   */
+  public static int[] findSubstrings(Reader reader, String subString) throws IOException {
+    char[] concat = new char[subString.length() * 3 + 1];
+    char[] string = subString.toCharArray();
+    List<Integer> ans = new ArrayList<Integer>(0);
+    System.arraycopy(string, 0, concat, 0, string.length);
+    concat[string.length] = '$';
+    int off = string.length + 1;
+    int len = reader.read(concat, off, subString.length() * 2);
 
-        int len = br.read(text, 0, find.length() * 2);
-        int offset = 0;
+    int offset = 0;
 
-        while (len != -1) {
-            String concat = find + "$" + (new String(text));
+    while (len != -1) {
+      int l = concat.length;
+      int[] z = new int[l];
 
-            int l = concat.length();
-            int Z[] = new int[l];
+      getZ(concat, z);
 
-            getZ(concat, Z);
-
-            for (int i = 0; i < l; ++i) {
-                if (Z[i] == find.length()) {
-                    ans.add(i - find.length() - 1 + offset);
-                    for (int j = i - find.length() - 1; j < i - 1; j++)
-                        text[j] = '$';
-                }
-            }
-
-            for (int i = 0; i < find.length(); i++)
-                text[i] = text[i + find.length()];
-
-            len = br.read(text, find.length(), find.length());
-
-            if (len < find.length())
-                for (int i = find.length() + len; i < find.length()*2; i++)
-                    text[i] = '$';
-
-            offset += find.length();
+      for (int i = off; i < l; ++i) {
+        if (z[i] == subString.length()) {
+          ans.add(i - subString.length() - 1 + offset);
+          for (int j = i; j < i+subString.length(); j++) {
+            concat[j] = '$';
+          }
         }
-        int[] array = new int[ans.size()];
+      }
 
-        for (int i = 0; i < ans.size(); i++)
-            array[i] = ans.get(i);
+      System.arraycopy(concat, subString.length()+off, concat, off, subString.length());
 
-        return array;
+      len = reader.read(concat, subString.length()+off, subString.length());
+
+      if (len < subString.length()) {
+        for (int i = subString.length() + len + off; i < subString.length() * 3 + 1; i++) {
+          concat[i] = '$';
+        }
+      }
+
+      offset += subString.length();
     }
 
-    private static void getZ(String str, int[] Z) {
-        int n = str.length();
-        int L = 0, R = 0;
-        for(int i = 1; i < n; ++i) {
-            if(i > R){
-                L = R = i;
-                while(R < n && str.charAt(R - L) == str.charAt(R))
-                    R++;
-                Z[i] = R - L;
-                R--;
-            }
-            else{
-                int k = i - L;
-                if(Z[k] < R - i + 1)
-                    Z[i] = Z[k];
-                else{
-                    L = i;
-                    while(R < n && str.charAt(R - L) == str.charAt(R))
-                        R++;
-                    Z[i] = R - L;
-                    R--;
-                }
-            }
-        }
+    int[] array = new int[ans.size()];
+
+    for (int i = 0; i < ans.size(); i++) {
+      array[i] = ans.get(i);
     }
+
+    return array;
+  }
+
+  private static void getZ(char[] str, int[] z) {
+    int n = str.length;
+    int l = 0, r = 0;
+    for (int i = 1; i < n; ++i) {
+      if (i > r) {
+        l = r = i;
+        while (r < n && str[r - l] == str[r]) {
+          r++;
+        }
+        z[i] = r - l;
+        r--;
+      } else {
+        int k = i - l;
+        if (z[k] < r - i + 1) {
+          z[i] = z[k];
+        } else {
+          l = i;
+          while (r < n && str[r - l] == str[r]) {
+            r++;
+          }
+          z[i] = r - l;
+          r--;
+        }
+      }
+    }
+  }
 }
