@@ -7,11 +7,36 @@ import org.junit.Test;
 public class PrimeNumsTests {
 
   @Test
+  public void putNull() {
+    int[] test = null;
+    try{
+      PrimeNumbers.ifThereAreOneNotPrimeConsistently(test);
+      Assert.fail();
+    } catch (IllegalArgumentException e) {
+      Assert.assertTrue(true);
+    }
+    try{
+      PrimeNumbers.ifThereAreOneNotPrimeParallel(test);
+      Assert.fail();
+    } catch (IllegalArgumentException e) {
+      Assert.assertTrue(true);
+    } catch (InterruptedException | ExecutionException e) {
+      e.printStackTrace();
+    }
+    try{
+      PrimeNumbers.ifThereAreOneNotPrimeParralelStream(test);
+      Assert.fail();
+    } catch (IllegalArgumentException e) {
+      Assert.assertTrue(true);
+    }
+  }
+
+  @Test
   public void test2() {
     int[] test = new int[1000000];
     for (int i = 0; i<1000000; i++)
       test[i] = 1000000007;
-    Assert.assertFalse(PrimeNumbers.IfThereAreOneNotPrimeConsistently(test));
+    Assert.assertFalse(PrimeNumbers.ifThereAreOneNotPrimeConsistently(test));
   }
 
   @Test
