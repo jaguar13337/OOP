@@ -22,8 +22,12 @@ class Session {
   }
 
   double getAverageGradeInThisSession() {
-    if (averageGradeInThisSession != 0) return averageGradeInThisSession;
-    for (Exam exam : session) averageGradeInThisSession += exam.getGrade();
+    if (averageGradeInThisSession != 0) {
+      return averageGradeInThisSession;
+    }
+    for (Exam exam : session) {
+      averageGradeInThisSession += exam.getGrade();
+    }
     averageGradeInThisSession /= session.size();
     return averageGradeInThisSession;
   }
