@@ -3,40 +3,20 @@ package ru.nsu.fit.g18214.yakovlev;
 import java.util.ArrayList;
 
 class Session {
-  private ArrayList<Exam> session;
-  private double averageGradeInThisSession;
-  private boolean hasThree;
+  private DiplomaAccum accum;
 
-  Session(String[] namesOfExams, Integer[] grades) {
-    if (namesOfExams.length != grades.length) throw new IllegalArgumentException();
-    this.session = new ArrayList<>();
-    for (int i = 0; i < grades.length; i++) {
-      addExam(namesOfExams[i], grades[i]);
-      if (grades[i] == 3) hasThree = true;
-    }
-    averageGradeInThisSession = 0;
+  Session() {
+    this.accum = new DiplomaAccum();
   }
 
   boolean isHasThree() {
-    return hasThree;
+    return accum.isHasThree();
   }
 
-  double getAverageGradeInThisSession() {
-    if (averageGradeInThisSession != 0) {
-      return averageGradeInThisSession;
-    }
-    for (Exam exam : session) {
-      averageGradeInThisSession += exam.getGrade();
-    }
-    averageGradeInThisSession /= session.size();
-    return averageGradeInThisSession;
+  double getMeanGradeInThisSession() {
+    return accum.getMean();
   }
-
-  private void addExam(String nameOfExam, Integer grade) {
-    session.add(new Exam(grade, nameOfExam));
-  }
-
-  ArrayList<Exam> getSession() {
-    return session;
+  void addExam(Grade grade) {
+      accum.addGrade(grade);
   }
 }

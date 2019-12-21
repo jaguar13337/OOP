@@ -14,36 +14,40 @@ public class GradebookList implements Gradebook {
    * Grade book List constructor which is get a List of exams names and List of grades in this
    * exams. String[i] name of exam must have Grades[i] grade.
    *
-   * @param namesOfExams ArrayList of String arrays, which are including a names of exams. One
-   *     string array = one session.
    * @param grades ArrayList of Integer arrays, which are including a grades in current exam. One
    *     integer array = one session.
-   * @throws IllegalArgumentException if count of exams not equals to count of grades, or if you put
-   *     null as an argument.
+   * @throws IllegalArgumentException if you put null as an argument.
    */
-  public GradebookList(ArrayList<String[]> namesOfExams, ArrayList<Integer[]> grades)
+  public GradebookList(ArrayList<Grade[]> grades)
       throws IllegalArgumentException {
-    if (namesOfExams == null || grades == null || namesOfExams.size() != grades.size()) {
+    if (grades == null) {
       throw new IllegalArgumentException();
     }
     gradebook = new ArrayList<>();
-    for (int i = 0; i < namesOfExams.size(); i++) {
-      gradebook.add(new Session(namesOfExams.get(i), grades.get(i)));
+    for (Grade[] gradeArray : grades) {
+      Session session = new Session();
+      for (Grade grade: gradeArray) {
+        session.addExam(grade);
+      }
+      gradebook.add(session);
     }
   }
 
   /**
    * This method allow you to add new Session with exams 'namesOfExams' and grades on them 'grades'.
    *
-   * @param namesOfExams names of passed exams.
    * @param grades grades on this exams.
    * @throws IllegalArgumentException if you put null as one of element.
    */
-  public void addSession(String[] namesOfExams, Integer[] grades) throws IllegalArgumentException {
-    if (namesOfExams == null || grades == null) {
+  public void addSession(Grade[] grades) throws IllegalArgumentException {
+    if (grades == null) {
       throw new IllegalArgumentException();
     }
-    gradebook.add(new Session(namesOfExams, grades));
+    Session session = new Session();
+    for (Grade grade : grades) {
+      session.addExam(grade);
+    }
+    gradebook.add(session);
   }
 
   /**
@@ -53,12 +57,11 @@ public class GradebookList implements Gradebook {
    */
   @Override
   public double getAverageScore() {
-    double averageScore = 0;
+    double sumOfMeansInSessions = 0;
     for (Session session : gradebook) {
-      averageScore += session.getAverageGradeInThisSession();
+      sumOfMeansInSessions += session.getMeanGradeInThisSession();
     }
-    averageScore /= gradebook.size();
-    return averageScore;
+    return sumOfMeansInSessions/gradebook.size();
   }
 
   /**
@@ -74,20 +77,7 @@ public class GradebookList implements Gradebook {
         return false;
       }
     }
-    return getDiplomaAverageScore() >= 4.75;
-  }
-
-  private double getDiplomaAverageScore() {
-    Map<String, Integer> table = new HashMap<>();
-    for (Session session : gradebook) {
-      for (Exam exam : session.getSession()) {
-        table.put(exam.getNameOfExam(), exam.getGrade());
-      }
-    }
-    List<String> keys = new ArrayList<>(table.keySet());
-    double ans = 0;
-    for (String str : keys) ans += table.get(str);
-    return ans / keys.size();
+    return getAverageScore() >= 4.75;
   }
 
   /**
@@ -99,6 +89,6 @@ public class GradebookList implements Gradebook {
   @Override
   public boolean isStudentGetIncreasedScholarship() {
     Session lastSession = gradebook.get(gradebook.size() - 1);
-    return lastSession.getAverageGradeInThisSession() == 5;
+    return lastSession.getMeanGradeInThisSession() == 5;
   }
 }
