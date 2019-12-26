@@ -57,27 +57,30 @@ public class GradebookList implements Gradebook {
    */
   @Override
   public double getAverageScore() {
-    double sumOfMeansInSessions = 0;
+    MeanGradeAccum accum = new MeanGradeAccum();
     for (Session session : gradebook) {
-      sumOfMeansInSessions += session.getMeanGradeInThisSession();
+      for (Grade grade : session.getGrades()) {
+        grade.participateInMean(accum);
+      }
     }
-    return sumOfMeansInSessions/gradebook.size();
+    return accum.getMean();
   }
 
   /**
    * This method understands, can owner os this gradebook get a red diploma.
    *
-   * @return returns true, if an owner of gradebook hasn't three grade and his average score more or
-   *     equals than 4.75.
+   * @return returns true, if an owner of gradebook hasn't three grade, his average score more or
+   *     equals than 4.75 and his graduate work grade equals 5.
    */
   @Override
   public boolean canStudentGetRedDiploma() {
+    DiplomaAccum accum = new DiplomaAccum();
     for (Session session : gradebook) {
-      if (session.isHasThree()) {
-        return false;
+      for (Grade grade : session.getGrades()) {
+        grade.participateInDiploma(accum);
       }
     }
-    return getAverageScore() >= 4.75;
+    return accum.canStudentGetRedDiploma();
   }
 
   /**
@@ -89,6 +92,10 @@ public class GradebookList implements Gradebook {
   @Override
   public boolean isStudentGetIncreasedScholarship() {
     Session lastSession = gradebook.get(gradebook.size() - 1);
-    return lastSession.getMeanGradeInThisSession() == 5;
+    MeanGradeAccum accum = new MeanGradeAccum();
+    for (Grade grade : lastSession.getGrades()) {
+      grade.participateInMean(accum);
+    }
+    return accum.getMean() == 5;
   }
 }

@@ -7,12 +7,16 @@ class GradeFive extends Grade<Integer> {
   }
 
   @Override
-  public int participateInMean() {
-    return getGrade();
+  void participateInMean(MeanGradeAccum accum) {
+    accum.setGradeSum(accum.getGradeSum()+this.getGrade());
+    accum.setCount(accum.getCount()+1);
   }
 
   @Override
-  public int participateInDiploma() {
-    return getGrade();
+  void participateInDiploma(DiplomaAccum accum) {
+    if (getGrade() == 3) {
+      accum.setHasThree(true);
+    }
+    participateInMean(accum.getMeanGradeAccum());
   }
 }

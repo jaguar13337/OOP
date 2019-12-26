@@ -18,8 +18,8 @@ abstract class Grade <T> {
     return nameOfExam;
   }
 
-  abstract int participateInMean();
+  abstract void participateInMean(MeanGradeAccum accum);
 
-  abstract int participateInDiploma();
+  abstract void participateInDiploma(DiplomaAccum accum);
 
 }

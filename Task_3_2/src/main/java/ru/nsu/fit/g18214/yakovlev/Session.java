@@ -3,20 +3,18 @@ package ru.nsu.fit.g18214.yakovlev;
 import java.util.ArrayList;
 
 class Session {
-  private DiplomaAccum accum;
+
+  private ArrayList <Grade> grades;
 
   Session() {
-    this.accum = new DiplomaAccum();
+    this.grades = new ArrayList<>();
   }
 
-  boolean isHasThree() {
-    return accum.isHasThree();
+  public ArrayList<Grade> getGrades() {
+    return grades;
   }
 
-  double getMeanGradeInThisSession() {
-    return accum.getMean();
-  }
   void addExam(Grade grade) {
-      accum.addGrade(grade);
+      grades.add(grade);
   }
 }

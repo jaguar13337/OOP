@@ -18,7 +18,7 @@ public class GradebookListTest {
     f1[5] = new GradeFive("History", 5);
     f1[6] = new Credit("Sport", true);
     exams.add(f1);
-    Grade[] f2 = new Grade[7];
+    Grade[] f2 = new Grade[8];
     f2[0] = new GradeFive("Math analysis", 4);
     f2[1] = new GradeFive("Imperative programming", 5);
     f2[2] = new GradeFive("Declarative programming", 5);
@@ -26,11 +26,12 @@ public class GradebookListTest {
     f2[4] = new GradeFive("English", 4);
     f2[5] = new GradeFive("Russian",5);
     f2[6] = new Credit("Sport", true);
+    f2[7] = new GraduateWork("ОСИ", 5);
     exams.add(f2);
     GradebookList gradebook = new GradebookList(exams);
     Assert.assertFalse(gradebook.isStudentGetIncreasedScholarship());
     Assert.assertTrue(gradebook.canStudentGetRedDiploma());
-    Assert.assertEquals(4.83, gradebook.getAverageScore(), 0.01);
+    Assert.assertEquals(4.82, gradebook.getAverageScore(), 0.01);
     Grade[] f3 = new Grade[6];
     f3[0] = new GradeFive("Math analysis", 4);
     f3[1] = new GradeFive("Imperative programming", 4);
@@ -41,6 +42,6 @@ public class GradebookListTest {
     gradebook.addSession(f3);
     Assert.assertFalse(gradebook.isStudentGetIncreasedScholarship());
     Assert.assertFalse(gradebook.canStudentGetRedDiploma());
-    Assert.assertEquals(4.55, gradebook.getAverageScore(), 0.01);
+    Assert.assertEquals(4.53, gradebook.getAverageScore(), 0.01);
   }
 }
