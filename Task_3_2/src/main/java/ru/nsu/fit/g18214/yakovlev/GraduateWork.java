@@ -11,7 +11,7 @@ class GraduateWork extends Grade<Integer> {
 
   @Override
   void participateInDiploma(DiplomaAccum accum) {
-    if (getGrade() == 5) {
+    if (getGrade() != 5) {
       accum.setImpossibleToGetRedDiploma(true);
     }
   }
