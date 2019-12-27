@@ -9,13 +9,12 @@ class GradeFive extends Grade<Integer> {
   @Override
   void participateInMean(MeanGradeAccum accum) {
     accum.addGradeToSum(getGrade());
-    accum.incCount();
   }
 
   @Override
   void participateInDiploma(DiplomaAccum accum) {
     if (getGrade() == 3) {
-      accum.setHasThree(true);
+      accum.setImpossibleToGetRedDiploma(true);
     }
     participateInMean(accum.getMeanGradeAccum());
   }

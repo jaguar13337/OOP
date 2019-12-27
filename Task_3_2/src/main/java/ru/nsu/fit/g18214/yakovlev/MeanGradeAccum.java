@@ -1,7 +1,5 @@
 package ru.nsu.fit.g18214.yakovlev;
 
-import java.util.ArrayList;
-
 class MeanGradeAccum {
 
   private int gradeSum;
@@ -13,14 +11,11 @@ class MeanGradeAccum {
   }
 
   double getMean() {
-    return (double)gradeSum / count;
+    return (double) gradeSum / count;
   }
 
   void addGradeToSum(int grade) {
     gradeSum += grade;
-  }
-
-  void incCount() {
     count++;
   }
 }

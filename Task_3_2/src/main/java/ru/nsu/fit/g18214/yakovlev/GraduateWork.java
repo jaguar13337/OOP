@@ -7,13 +7,12 @@ class GraduateWork extends Grade<Integer> {
   }
 
   @Override
-  void participateInMean(MeanGradeAccum accum) {
-  }
+  void participateInMean(MeanGradeAccum accum) {}
 
   @Override
   void participateInDiploma(DiplomaAccum accum) {
     if (getGrade() == 5) {
-      accum.setGraduateWorkGradeIsFive(true);
+      accum.setImpossibleToGetRedDiploma(true);
     }
   }
 }

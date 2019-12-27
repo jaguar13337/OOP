@@ -7,11 +7,8 @@ class Credit extends Grade<Boolean> {
   }
 
   @Override
-  void participateInMean(MeanGradeAccum accum) {
-
-  }
+  void participateInMean(MeanGradeAccum accum) {}
 
   @Override
-  void participateInDiploma(DiplomaAccum accum) {
-  }
+  void participateInDiploma(DiplomaAccum accum) {}
 }

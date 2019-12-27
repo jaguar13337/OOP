@@ -4,17 +4,17 @@ import java.util.ArrayList;
 
 class Session {
 
-  private ArrayList <Grade> grades;
+  private ArrayList<Grade> grades;
 
   Session() {
     this.grades = new ArrayList<>();
   }
 
-  public ArrayList<Grade> getGrades() {
+  ArrayList<Grade> getGrades() {
     return grades;
   }
 
   void addExam(Grade grade) {
-      grades.add(grade);
+    grades.add(grade);
   }
 }

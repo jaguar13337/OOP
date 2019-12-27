@@ -2,40 +2,26 @@ package ru.nsu.fit.g18214.yakovlev;
 
 class DiplomaAccum {
   private MeanGradeAccum meanGradeAccum;
-  private boolean hasThree;
-  private boolean graduateWorkGradeIsFive;
-
-
+  private boolean impossibleToGetRedDiploma;
 
   DiplomaAccum() {
     meanGradeAccum = new MeanGradeAccum();
-    hasThree = false;
-    graduateWorkGradeIsFive = false;
+    impossibleToGetRedDiploma = false;
   }
 
   MeanGradeAccum getMeanGradeAccum() {
     return meanGradeAccum;
   }
 
-  void setHasThree(boolean hasThree) {
-    this.hasThree = hasThree;
+  void setImpossibleToGetRedDiploma(boolean hasThree) {
+    this.impossibleToGetRedDiploma = hasThree;
   }
 
-
-  boolean isHasThree() {
-    return hasThree;
+  boolean isImpossibleToGetRedDiploma() {
+    return impossibleToGetRedDiploma;
   }
-
-  void setGraduateWorkGradeIsFive(boolean graduateWorkGradeIsFive) {
-    this.graduateWorkGradeIsFive = graduateWorkGradeIsFive;
-  }
-
 
   boolean canStudentGetRedDiploma() {
-    return !hasThree && getMeanGradeAccum().getMean() >= 4.75 && graduateWorkGradeIsFive;
+    return !impossibleToGetRedDiploma && getMeanGradeAccum().getMean() >= 4.75;
   }
-
-
-
 }
-

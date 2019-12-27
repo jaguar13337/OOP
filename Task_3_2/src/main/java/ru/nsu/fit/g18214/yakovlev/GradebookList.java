@@ -1,9 +1,6 @@
 package ru.nsu.fit.g18214.yakovlev;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /** This is a grade book realisation on a List of Sessions. */
 public class GradebookList implements Gradebook {
@@ -18,15 +15,14 @@ public class GradebookList implements Gradebook {
    *     integer array = one session.
    * @throws IllegalArgumentException if you put null as an argument.
    */
-  public GradebookList(ArrayList<Grade[]> grades)
-      throws IllegalArgumentException {
+  public GradebookList(ArrayList<Grade[]> grades) throws IllegalArgumentException {
     if (grades == null) {
       throw new IllegalArgumentException();
     }
     gradebook = new ArrayList<>();
     for (Grade[] gradeArray : grades) {
       Session session = new Session();
-      for (Grade grade: gradeArray) {
+      for (Grade grade : gradeArray) {
         session.addExam(grade);
       }
       gradebook.add(session);

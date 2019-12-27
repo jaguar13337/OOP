@@ -1,6 +1,6 @@
 package ru.nsu.fit.g18214.yakovlev;
 
-abstract class Grade <T> {
+abstract class Grade<T> {
 
   private String nameOfExam;
   private T grade;
@@ -21,5 +21,4 @@ abstract class Grade <T> {
   abstract void participateInMean(MeanGradeAccum accum);
 
   abstract void participateInDiploma(DiplomaAccum accum);
-
 }
