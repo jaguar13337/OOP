@@ -16,19 +16,11 @@ class MeanGradeAccum {
     return (double)gradeSum / count;
   }
 
-  int getGradeSum() {
-    return gradeSum;
+  void addGradeToSum(int grade) {
+    gradeSum += grade;
   }
 
-  void setGradeSum(int gradeSum) {
-    this.gradeSum = gradeSum;
-  }
-
-  int getCount() {
-    return count;
-  }
-
-  void setCount(int count) {
-    this.count = count;
+  void incCount() {
+    count++;
   }
 }

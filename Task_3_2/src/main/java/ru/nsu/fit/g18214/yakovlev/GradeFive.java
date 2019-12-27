@@ -8,8 +8,8 @@ class GradeFive extends Grade<Integer> {
 
   @Override
   void participateInMean(MeanGradeAccum accum) {
-    accum.setGradeSum(accum.getGradeSum()+this.getGrade());
-    accum.setCount(accum.getCount()+1);
+    accum.addGradeToSum(getGrade());
+    accum.incCount();
   }
 
   @Override
