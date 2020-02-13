@@ -40,18 +40,17 @@ class Courier implements Runnable {
       if (order == null) {
         break;
       }
-      log.logGivenMessage("[" + order.getOrderNum() + "] [TAKEN] [Courier " + uuid + "]");
+      log.logGivenMessage(
+          String.format("[%d] [TAKEN] [Courier %s]", order.getOrderNum(), uuid.toString()));
       orders.add(order);
     }
 
     while (!orders.isEmpty()) {
       Thread.sleep(deliveryTime);
       log.logGivenMessage(
-          "["
-              + orders.get(orders.size() - 1).getOrderNum()
-              + "] [DELIVERED] [Courier "
-              + uuid
-              + "]");
+          String.format(
+              "[%d] [DELIVERED] [Courier %s]",
+              orders.get(orders.size() - 1).getOrderNum(), uuid.toString()));
       orders.remove(orders.size() - 1);
     }
 

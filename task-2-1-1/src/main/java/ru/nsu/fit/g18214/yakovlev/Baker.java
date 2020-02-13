@@ -1,5 +1,6 @@
 package ru.nsu.fit.g18214.yakovlev;
 
+import java.util.StringJoiner;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -36,11 +37,11 @@ class Baker implements Runnable {
     if (order == null) {
       return;
     }
-    log.logGivenMessage("[" + order.getOrderNum() + "] [TAKEN] [BAKER " + uuid + "]");
+    log.logGivenMessage(String.format("[%d] [TAKEN] [BAKER %s]", order.getOrderNum(), uuid.toString()));
     Thread.sleep(timeForOnePizza);
-    log.logGivenMessage("[" + order.getOrderNum() + "] [COOKED] [BAKER " + uuid + "]");
+    log.logGivenMessage(String.format("[%d] [COOKED] [BAKER %s]", order.getOrderNum(), uuid.toString()));
     storage.add(order);
-    log.logGivenMessage("[" + order.getOrderNum() + "] [READY FOR DELIVERY]");
+    log.logGivenMessage(String.format("[%d] [READY FOR DELIVERY]", order.getOrderNum()));
   }
 
   @Override
