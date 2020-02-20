@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class Pizzeria {
 
@@ -13,6 +14,7 @@ public class Pizzeria {
   private List<Baker> bakers;
   private List<Courier> couriers;
   private transient int workingTime;
+  private Log log;
   private transient boolean isGen = false;
   private transient OrderGenerator generator;
 
@@ -21,17 +23,17 @@ public class Pizzeria {
    *
    * @param workingTime time, which pizzeria will wait until the stop all workers.
    * @param storageCapacity capacity, which storage can contain.
-   * @param queueCapacity order queue capacity, which it can contain.
    * @param log where to write log messages.
    * @param reader opened reader on json file with rightly printed params.
    */
-  public Pizzeria(int workingTime, int storageCapacity, int queueCapacity, Log log, Reader reader) {
+  public Pizzeria(int workingTime, int storageCapacity, Log log, Reader reader) {
     this.workingTime = workingTime;
-    this.orders = new ArrayBlockingQueue<>(queueCapacity);
+    this.orders = new LinkedBlockingDeque<>();
     this.storage = new ArrayBlockingQueue<>(storageCapacity);
     addEmployees(reader);
-    couriers.forEach(w -> w.addPizzeriaParameters(log, workingTime, storage));
-    bakers.forEach(w -> w.addPizzeriaParameters(log, workingTime, storage, orders));
+    this.log = log;
+    couriers.forEach(w -> w.addPizzeriaParameters(log, storage));
+    bakers.forEach(w -> w.addPizzeriaParameters(log, storage, orders));
   }
 
   /**
@@ -42,7 +44,6 @@ public class Pizzeria {
   public void generateOrders(int period) {
     generator = new OrderGenerator(orders, period);
     isGen = true;
-    new Thread(generator).start();
   }
 
   private void addEmployees(Reader reader) {
@@ -53,21 +54,25 @@ public class Pizzeria {
   }
 
   /**
-   * Work of pizzeria starts.
-   *
-   * @throws InterruptedException if pizzeria was interrupted.
+   * Pizzeria work starts.
+   * Pizzeria call bakers and couriers to start.
    */
-  public void work() throws InterruptedException {
-    bakers.forEach(w -> new Thread(w).start());
-    couriers.forEach(w -> new Thread(w).start());
-
-    Thread.sleep(workingTime);
-
+  public void work() {
+    bakers.forEach(Baker::work);
+    couriers.forEach(Courier::work);
     if (isGen) {
-      generator.doStop();
+      generator.start();
     }
-
-    bakers.forEach(Baker::doStop);
-    couriers.forEach(Courier::doStop);
+    try {
+      Thread.sleep(workingTime);
+    } catch (InterruptedException e) {
+      assert (false);
+    }
+    if (isGen) {
+      generator.stop();
+    }
+    bakers.forEach(Baker::stop);
+    couriers.forEach(Courier::stop);
+    log.getStats();
   }
 }
