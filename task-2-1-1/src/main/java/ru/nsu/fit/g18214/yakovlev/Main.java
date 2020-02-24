@@ -5,19 +5,16 @@ import java.io.FileReader;
 
 public class Main {
   public static void main(String[] args) throws FileNotFoundException {
-    if (args.length < 3 || args.length > 4) {
-      throw new IllegalArgumentException(
-          "Need 3 args for working without orderGenerator and 4 otherwise.");
+    if (args.length != 1 || !args[0].endsWith(".json")) {
+      System.out.println("Need JSON configuration file only.");
+      return;
     }
     Pizzeria pizzeria =
         new Pizzeria(
-            Integer.parseInt(args[2]),
-            Integer.parseInt(args[1]),
-            new Journal(),
-            new FileReader(args[0]));
-    if (args.length > 3) {
-      pizzeria.generateOrders(Integer.parseInt(args[3]));
-    }
+            PizzeriaConfig.makeConfig(
+                new FileReader(
+                    args[0])),
+            new JournalList());
     pizzeria.work();
   }
 }

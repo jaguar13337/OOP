@@ -6,14 +6,15 @@ import java.util.concurrent.BlockingQueue;
 class Baker implements Runnable {
 
   private int timeForOnePizza;
-  private transient UUID uuid;
-  private transient BlockingQueue<Order> orders;
-  private transient BlockingQueue<Order> storage;
-  private transient Log log;
+  private UUID uuid;
+  private BlockingQueue<Order> orders;
+  private BlockingQueue<Order> storage;
+  private Journal journal;
   private Thread bakerThread;
 
-  void addPizzeriaParameters(Log log, BlockingQueue<Order> storage, BlockingQueue<Order> orders) {
-    this.log = log;
+  void addPizzeriaParameters(
+      Journal journal, BlockingQueue<Order> storage, BlockingQueue<Order> orders) {
+    this.journal = journal;
     this.storage = storage;
     this.orders = orders;
     this.uuid = UUID.randomUUID();
@@ -37,29 +38,24 @@ class Baker implements Runnable {
   public void run() {
     while (!Thread.interrupted()) {
       Order order;
-      long time;
       try {
-        time = System.currentTimeMillis();
         order = orders.take();
-        if (System.currentTimeMillis() - time > timeForOnePizza) {
-          log.addMessageToJournalAndPrint(State.NEED_MORE_ORDERS, uuid, order.getOrderNum());
-        }
+        journal.addRecord(
+            new Record(uuid, State.TAKEN, System.currentTimeMillis(), order.getOrderNum()));
       } catch (InterruptedException e) {
         return;
       }
-      log.addMessageToJournalAndPrint(State.TAKEN, uuid, order.getOrderNum());
       try {
         Thread.sleep(timeForOnePizza);
+        journal.addRecord(
+            new Record(uuid, State.COOKED, System.currentTimeMillis(), order.getOrderNum()));
+        storage.add(order);
+        journal.addRecord(
+            new Record(uuid, State.STORED, System.currentTimeMillis(), order.getOrderNum()));
       } catch (InterruptedException e) {
-        log.addMessageToJournalAndPrint(State.COOKED, uuid, order.getOrderNum());
+        journal.addRecord(
+            new Record(uuid, State.DROPPED, System.currentTimeMillis(), order.getOrderNum()));
         return;
-      }
-      log.addMessageToJournalAndPrint(State.COOKED, uuid, order.getOrderNum());
-
-      time = System.currentTimeMillis();
-      storage.add(order);
-      if (System.currentTimeMillis() - time > timeForOnePizza) {
-        log.addMessageToJournalAndPrint(State.FULL_STORAGE, uuid, order.getOrderNum());
       }
     }
   }

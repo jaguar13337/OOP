@@ -9,14 +9,14 @@ class Courier implements Runnable {
 
   private int luggageCapacity;
   private int deliveryTime;
-  private transient BlockingQueue<Order> storage;
-  private transient Log log;
-  private transient UUID uuid;
+  private BlockingQueue<Order> storage;
+  private Journal journal;
+  private UUID uuid;
   private Thread courierThread;
   private List<Order> orders = new ArrayList<>();
 
-  void addPizzeriaParameters(Log log, BlockingQueue<Order> storage) {
-    this.log = log;
+  void addPizzeriaParameters(Journal journal, BlockingQueue<Order> storage) {
+    this.journal = journal;
     this.storage = storage;
     this.uuid = UUID.randomUUID();
   }
@@ -36,33 +36,40 @@ class Courier implements Runnable {
   }
 
   private void dropOrders() {
-    orders.forEach(w -> log.addMessageToJournalAndPrint(State.DROPPED, uuid, w.getOrderNum()));
+    orders.forEach(
+        w ->
+            journal.addRecord(
+                new Record(uuid, State.DROPPED, System.currentTimeMillis(), w.getOrderNum())));
   }
 
   @Override
   public void run() {
     while (!Thread.interrupted()) {
       while (orders.size() < luggageCapacity) {
-        Order order;
         try {
-          order = storage.take();
+          Order order = storage.take();
+          journal.addRecord(
+              new Record(uuid, State.TAKEN, System.currentTimeMillis(), order.getOrderNum()));
+          orders.add(order);
         } catch (InterruptedException e) {
           dropOrders();
           return;
         }
-        log.addMessageToJournalAndPrint(State.TAKEN, uuid, order.getOrderNum());
-        orders.add(order);
       }
 
       while (!orders.isEmpty()) {
         try {
           Thread.sleep(deliveryTime);
+          journal.addRecord(
+              new Record(
+                  uuid,
+                  State.DELIVERED,
+                  System.currentTimeMillis(),
+                  orders.remove(orders.size() - 1).getOrderNum()));
         } catch (InterruptedException e) {
           dropOrders();
           return;
         }
-        log.addMessageToJournalAndPrint(State.DELIVERED, uuid, orders.get(orders.size() - 1).getOrderNum());
-        orders.remove(orders.size() - 1);
       }
     }
   }

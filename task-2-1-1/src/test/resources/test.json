@@ -1,4 +1,8 @@
 {
+  "workingTime": 5000,
+  "storageCapacity": 50,
+  "queueCapacity": 50,
+  "generatorSpeed": 350,
   "bakers": [
     {
       "timeForOnePizza": 520
