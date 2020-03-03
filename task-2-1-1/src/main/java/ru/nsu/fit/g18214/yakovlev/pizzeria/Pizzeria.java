@@ -1,8 +1,11 @@
-package ru.nsu.fit.g18214.yakovlev;
+package ru.nsu.fit.g18214.yakovlev.pizzeria;
 
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import ru.nsu.fit.g18214.yakovlev.analyst.Statistician;
+import ru.nsu.fit.g18214.yakovlev.analyst.StatisticianMap;
+import ru.nsu.fit.g18214.yakovlev.journal.Journal;
 
 public class Pizzeria {
 
@@ -30,10 +33,10 @@ public class Pizzeria {
     couriers.forEach(w -> w.addPizzeriaParameters(journal, storage));
     bakers.forEach(w -> w.addPizzeriaParameters(journal, storage, orders));
     generator = new OrderGenerator(orders, config.getGeneratorSpeed());
-    statistician = new Statistician(journal, workingTime / 10);
+    statistician= new StatisticianMap(journal, workingTime / 10);
   }
 
-  /** Pizzeria work starts. Pizzeria call bakers and couriers to start. */
+  /** Pizzeria work starts. pizzeria call bakers and couriers to start. */
   public void work() {
     bakers.forEach(Baker::work);
     couriers.forEach(Courier::work);

@@ -1,8 +1,8 @@
-package ru.nsu.fit.g18214.yakovlev;
+package ru.nsu.fit.g18214.yakovlev.pizzeria;
 
 import java.util.concurrent.BlockingQueue;
 
-class OrderGenerator implements Runnable {
+class OrderGenerator {
 
   private BlockingQueue<Order> orders;
   private int orderNumber = 0;
@@ -24,19 +24,18 @@ class OrderGenerator implements Runnable {
   }
 
   void start() {
-    genThread = new Thread(this);
+    genThread =
+        new Thread(
+            () -> {
+              while (!Thread.interrupted()) {
+                orders.add(new Order(orderNumber++));
+                try {
+                  Thread.sleep(period);
+                } catch (InterruptedException e) {
+                  break;
+                }
+              }
+            });
     genThread.start();
-  }
-
-  @Override
-  public void run() {
-    while (!Thread.interrupted()) {
-      orders.add(new Order(orderNumber++));
-      try {
-        Thread.sleep(period);
-      } catch (InterruptedException e) {
-        break;
-      }
-    }
   }
 }

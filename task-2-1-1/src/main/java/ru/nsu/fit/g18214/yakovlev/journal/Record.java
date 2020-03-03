@@ -1,38 +1,34 @@
-package ru.nsu.fit.g18214.yakovlev;
+package ru.nsu.fit.g18214.yakovlev.journal;
 
 import java.util.UUID;
+import ru.nsu.fit.g18214.yakovlev.pizzeria.State;
 
-class Record {
+public class Record {
   private UUID uuid;
   private State state;
   private long time;
   private int orderID;
 
-  Record(UUID uuid, State state, long time, int orderID) {
+  public Record(UUID uuid, State state, long time, int orderID) {
     this.uuid = uuid;
     this.state = state;
     this.time = time;
     this.orderID = orderID;
   }
 
-  Record(State state, long time) {
-    this.state = state;
-    this.time = time;
-  }
-
-  UUID getUuid() {
+  public UUID getUuid() {
     return uuid;
   }
 
-  State getState() {
+  public State getState() {
     return state;
   }
 
-  long getTime() {
+  public long getTime() {
     return time;
   }
 
-  int getOrderID() {
+  public int getOrderID() {
     return orderID;
   }
 }

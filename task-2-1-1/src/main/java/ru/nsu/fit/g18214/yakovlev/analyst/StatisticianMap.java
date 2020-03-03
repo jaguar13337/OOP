@@ -1,12 +1,14 @@
-package ru.nsu.fit.g18214.yakovlev;
+package ru.nsu.fit.g18214.yakovlev.analyst;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import ru.nsu.fit.g18214.yakovlev.journal.Journal;
+import ru.nsu.fit.g18214.yakovlev.journal.Record;
 
-class Statistician {
+public class StatisticianMap implements Statistician {
 
   private Journal journal;
 
@@ -15,24 +17,24 @@ class Statistician {
   private List<String> strings;
   private Map<UUID, Statistics> statisticsMap;
 
-  Statistician(Journal journal, long maxDiff) {
+  public StatisticianMap(Journal journal, long maxDiff) {
     statisticsMap = new HashMap<>();
     this.journal = journal;
     this.maxDiff = maxDiff;
     this.strings = new ArrayList<>();
   }
 
-  void getStats() {
+  public void getStats() {
     for (Record record : journal) {
       statisticsMap.putIfAbsent(record.getUuid(), new Statistics());
       switch (record.getState()) {
         case TAKEN:
           statisticsMap.get(record.getUuid()).addTaken();
-          if (!strings.contains("WE CAN FIRE SOMEBODY\n")
+          if (!strings.contains("WE CAN FIRE SOMEBODY")
               && statisticsMap.get(record.getUuid()).getLastDoingTime() != 0L
               && record.getTime() - statisticsMap.get(record.getUuid()).getLastDoingTime()
                   > maxDiff) {
-            strings.add("WE CAN FIRE SOMEBODY\n");
+            strings.add("WE CAN FIRE SOMEBODY");
           }
           break;
         case COOKED:
@@ -40,10 +42,10 @@ class Statistician {
           statisticsMap.get(record.getUuid()).addFinished();
           break;
         case STORED:
-          if (!strings.contains("WE NEED BIGGER STORAGE\n")
+          if (!strings.contains("WE NEED BIGGER STORAGE")
               && record.getTime() - statisticsMap.get(record.getUuid()).getLastDoingTime()
                   > maxDiff) {
-            strings.add("WE NEED BIGGER STORAGE\n");
+            strings.add("WE NEED BIGGER STORAGE");
           }
           break;
         case DROPPED:
@@ -59,7 +61,7 @@ class Statistician {
     for (UUID uuid : statisticsMap.keySet()) {
       System.out.println(
           String.format(
-              "[WORKER %s] took [%d] finished [%d] and dropped [%d] orders",
+              "[WORKER %s] took [%d] finished [%d] and dropped [%d] orders.",
               uuid.toString(),
               statisticsMap.get(uuid).getTakenCount(),
               statisticsMap.get(uuid).getFinishedCount(),

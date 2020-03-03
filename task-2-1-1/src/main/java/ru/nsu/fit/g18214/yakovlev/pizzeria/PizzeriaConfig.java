@@ -1,10 +1,10 @@
-package ru.nsu.fit.g18214.yakovlev;
+package ru.nsu.fit.g18214.yakovlev.pizzeria;
 
 import com.google.gson.Gson;
 import java.io.Reader;
 import java.util.List;
 
-class PizzeriaConfig {
+public class PizzeriaConfig {
   private int workingTime;
   private int storageCapacity;
   private int queueCapacity;
@@ -36,7 +36,7 @@ class PizzeriaConfig {
     return couriers;
   }
 
-  static PizzeriaConfig makeConfig(Reader reader) {
+  public static PizzeriaConfig makeConfig(Reader reader) {
     Gson gson = new Gson();
     return gson.fromJson(reader, PizzeriaConfig.class);
   }

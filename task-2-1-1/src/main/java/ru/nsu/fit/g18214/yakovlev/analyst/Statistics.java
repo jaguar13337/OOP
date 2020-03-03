@@ -1,10 +1,19 @@
-package ru.nsu.fit.g18214.yakovlev;
+package ru.nsu.fit.g18214.yakovlev.analyst;
 
 class Statistics {
   private int droppedCount;
   private int takenCount;
   private int finishedCount;
   private long lastDoingTime;
+
+  Statistics() {
+    finishedCount = droppedCount = takenCount = 0;
+    lastDoingTime = 0L;
+  }
+
+  void addFinished() {
+    finishedCount++;
+  }
 
   int getDroppedCount() {
     return droppedCount;
@@ -32,14 +41,5 @@ class Statistics {
 
   void setLastDoingTime(long lastDoingTime) {
     this.lastDoingTime = lastDoingTime;
-  }
-
-  Statistics() {
-    finishedCount = droppedCount = takenCount = 0;
-    lastDoingTime = 0L;
-  }
-
-  void addFinished() {
-    finishedCount++;
   }
 }
