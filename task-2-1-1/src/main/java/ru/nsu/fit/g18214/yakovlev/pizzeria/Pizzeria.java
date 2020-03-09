@@ -1,21 +1,16 @@
 package ru.nsu.fit.g18214.yakovlev.pizzeria;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import ru.nsu.fit.g18214.yakovlev.analyst.JournalList;
 import ru.nsu.fit.g18214.yakovlev.analyst.Statistician;
-import ru.nsu.fit.g18214.yakovlev.analyst.StatisticianMap;
-import ru.nsu.fit.g18214.yakovlev.journal.Journal;
 
 public class Pizzeria {
 
-  private BlockingQueue<Order> orders;
-  private BlockingQueue<Order> storage;
-  private List<Baker> bakers;
-  private List<Courier> couriers;
+  private List<Person> workers;
   private int workingTime;
-  private Journal journal;
-  private OrderGenerator generator;
   private Statistician statistician;
 
   /**
@@ -23,32 +18,33 @@ public class Pizzeria {
    *
    * @param journal where to write journal messages.
    */
-  public Pizzeria(PizzeriaConfig config, Journal journal) {
+  public Pizzeria(PizzeriaConfig config, JournalList journal) {
     this.workingTime = config.getWorkingTime();
-    this.orders = new ArrayBlockingQueue<>(config.getQueueCapacity());
-    this.storage = new ArrayBlockingQueue<>(config.getStorageCapacity());
-    this.journal = journal;
-    bakers = config.getBakers();
-    couriers = config.getCouriers();
-    couriers.forEach(w -> w.addPizzeriaParameters(journal, storage));
-    bakers.forEach(w -> w.addPizzeriaParameters(journal, storage, orders));
-    generator = new OrderGenerator(orders, config.getGeneratorSpeed());
-    statistician= new StatisticianMap(journal, workingTime / 10);
+    BlockingQueue<Order> orders = new ArrayBlockingQueue<>(config.getQueueCapacity());
+    BlockingQueue<Order> storage = new ArrayBlockingQueue<>(config.getStorageCapacity());
+    workers = new ArrayList<>();
+    for (Integer integer : config.getBakers()) {
+      workers.add(new Baker(integer, journal, storage, orders));
+    }
+    for (CourierConfig courierConfig : config.getCouriers()) {
+      workers.add(new Courier(courierConfig, journal, storage));
+    }
+    workers.add(new OrderGenerator(orders, config.getGeneratorSpeed(), journal));
+    statistician = new Statistician(journal, workingTime / 10);
   }
 
   /** Pizzeria work starts. pizzeria call bakers and couriers to start. */
   public void work() {
-    bakers.forEach(Baker::work);
-    couriers.forEach(Courier::work);
-    generator.start();
+    workers.forEach(Person::work);
     try {
       Thread.sleep(workingTime);
     } catch (InterruptedException e) {
       assert (false);
     }
-    generator.stop();
-    bakers.forEach(Baker::stop);
-    couriers.forEach(Courier::stop);
-    statistician.getStats();
+    workers.forEach(Person::stop);
+
+    for (String string : statistician.getStats()) {
+      System.out.println(string);
+    }
   }
 }

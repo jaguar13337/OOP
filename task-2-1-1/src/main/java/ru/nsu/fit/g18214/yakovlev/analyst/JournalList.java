@@ -1,10 +1,12 @@
-package ru.nsu.fit.g18214.yakovlev.journal;
+package ru.nsu.fit.g18214.yakovlev.analyst;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import ru.nsu.fit.g18214.yakovlev.journal.Journal;
+import ru.nsu.fit.g18214.yakovlev.journal.Record;
 
-public class JournalList implements Journal {
+public class JournalList implements Journal, Iterable<Record> {
 
   @Override
   public Iterator<Record> iterator() {
@@ -21,4 +23,5 @@ public class JournalList implements Journal {
   public synchronized void addRecord(Record record) {
     stats.add(record);
   }
+
 }

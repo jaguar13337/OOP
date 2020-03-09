@@ -1,7 +1,6 @@
 package ru.nsu.fit.g18214.yakovlev.journal;
 
 import java.util.UUID;
-import ru.nsu.fit.g18214.yakovlev.pizzeria.State;
 
 public class Record {
   private UUID uuid;

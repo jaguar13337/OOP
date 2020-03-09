@@ -1,6 +1,6 @@
 package ru.nsu.fit.g18214.yakovlev.journal;
 
-public interface Journal extends Iterable<Record> {
+public interface Journal {
 
   void addRecord(Record record);
 

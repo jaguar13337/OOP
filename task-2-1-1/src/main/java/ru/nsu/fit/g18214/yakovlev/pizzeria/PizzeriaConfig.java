@@ -5,34 +5,52 @@ import java.io.Reader;
 import java.util.List;
 
 public class PizzeriaConfig {
-  private int workingTime;
-  private int storageCapacity;
-  private int queueCapacity;
-  private int generatorSpeed;
-  private List<Baker> bakers;
-  private List<Courier> couriers;
+  private Integer workingTime;
+  private Integer storageCapacity;
+  private Integer queueCapacity;
+  private Integer generatorSpeed;
+  private List<Integer> bakersValues;
+  private List<CourierConfig> couriers;
 
-  int getGeneratorSpeed() {
+  int getGeneratorSpeed()  {
+    if (generatorSpeed == null) {
+      throw new IllegalArgumentException();
+    }
     return generatorSpeed;
   }
 
   int getWorkingTime() {
+    if (workingTime == null) {
+      throw new IllegalArgumentException();
+    }
     return workingTime;
   }
 
   int getStorageCapacity() {
+    if (storageCapacity == null) {
+      throw new IllegalArgumentException();
+    }
     return storageCapacity;
   }
 
   int getQueueCapacity() {
+    if (queueCapacity == null) {
+      throw new IllegalArgumentException();
+    }
     return queueCapacity;
   }
 
-  List<Baker> getBakers() {
-    return bakers;
+  List<Integer> getBakers() {
+    if (bakersValues == null) {
+      throw new IllegalArgumentException();
+    }
+    return bakersValues;
   }
 
-  List<Courier> getCouriers() {
+  List<CourierConfig> getCouriers() {
+    if (couriers == null) {
+      throw new IllegalArgumentException();
+    }
     return couriers;
   }
 

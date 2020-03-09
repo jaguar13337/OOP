@@ -1,24 +1,20 @@
 {
   "workingTime": 5000,
-  "storageCapacity": 50,
+  "storageCapacity": 1,
   "queueCapacity": 50,
   "generatorSpeed": 350,
-  "bakers": [
-    {
-      "timeForOnePizza": 520
-    },
-    {
-      "timeForOnePizza": 500
-    }
+  "bakersValues": [
+    520,
+    500
   ],
   "couriers": [
     {
       "luggageCapacity": 1,
-      "deliveryTime": 50
+      "deliveryTime": 2000
     },
     {
-      "luggageCapacity": 2,
-      "deliveryTime": 60
+      "luggageCapacity": 1,
+      "deliveryTime": 2000
     }
   ]
 }
