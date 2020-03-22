@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import java.io.Reader;
 import java.util.List;
 
+/**
+ * Creates config file using method make config.
+ */
 public class PizzeriaConfig {
   private Integer workingTime;
   private Integer storageCapacity;
@@ -12,42 +15,45 @@ public class PizzeriaConfig {
   private List<Integer> bakersValues;
   private List<CourierConfig> couriers;
 
-  int getGeneratorSpeed()  {
+  private PizzeriaConfig() {
+  }
+
+  public int getGeneratorSpeed()  {
     if (generatorSpeed == null) {
       throw new IllegalArgumentException();
     }
     return generatorSpeed;
   }
 
-  int getWorkingTime() {
+  public int getWorkingTime() {
     if (workingTime == null) {
       throw new IllegalArgumentException();
     }
     return workingTime;
   }
 
-  int getStorageCapacity() {
+  public int getStorageCapacity() {
     if (storageCapacity == null) {
       throw new IllegalArgumentException();
     }
     return storageCapacity;
   }
 
-  int getQueueCapacity() {
+  public int getQueueCapacity() {
     if (queueCapacity == null) {
       throw new IllegalArgumentException();
     }
     return queueCapacity;
   }
 
-  List<Integer> getBakers() {
+  public List<Integer> getBakers() {
     if (bakersValues == null) {
       throw new IllegalArgumentException();
     }
     return bakersValues;
   }
 
-  List<CourierConfig> getCouriers() {
+  public List<CourierConfig> getCouriers() {
     if (couriers == null) {
       throw new IllegalArgumentException();
     }

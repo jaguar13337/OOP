@@ -1,6 +1,8 @@
 package ru.nsu.fit.g18214.yakovlev.analyst;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -26,6 +28,8 @@ public class Statistician {
     this.maxDiff = maxDiff;
     this.strings = new TreeSet<>();
   }
+
+
 
   public Set<String> getStats() {
     for (Record record : journal) {

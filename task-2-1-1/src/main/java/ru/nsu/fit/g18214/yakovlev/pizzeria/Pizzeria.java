@@ -14,7 +14,7 @@ public class Pizzeria {
   private Statistician statistician;
 
   /**
-   * Creates pizzeria with given fields and returns it.
+   * Creates pizzeria with given fields from Config.
    *
    * @param journal where to write journal messages.
    */
@@ -33,7 +33,10 @@ public class Pizzeria {
     statistician = new Statistician(journal, workingTime / 10);
   }
 
-  /** Pizzeria work starts. pizzeria call bakers and couriers to start. */
+  /**
+   * Pizzeria work starts. Pizzeria calls workers to start.
+   * Prints statistics into the stdout.
+   */
   public void work() {
     workers.forEach(Person::work);
     try {

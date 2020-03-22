@@ -1,11 +1,11 @@
 package ru.nsu.fit.g18214.yakovlev.pizzeria;
 
-class CourierConfig {
+public class CourierConfig {
 
   private int deliveryTime;
   private int luggageCapacity;
 
-  int getDeliveryTime() {
+  public int getDeliveryTime() {
     return deliveryTime;
   }
 
@@ -14,7 +14,7 @@ class CourierConfig {
     this.luggageCapacity = luggageCapacity;
   }
 
-  int getLuggageCapacity() {
+  public int getLuggageCapacity() {
     return luggageCapacity;
   }
 }
