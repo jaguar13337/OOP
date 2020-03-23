@@ -2,6 +2,7 @@ package ru.nsu.fit.g18214.yakovlev.pizzeria;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import ru.nsu.fit.g18214.yakovlev.analyst.JournalList;
@@ -35,9 +36,9 @@ public class Pizzeria {
 
   /**
    * Pizzeria work starts. Pizzeria calls workers to start.
-   * Prints statistics into the stdout.
+   * Returns statistics in set of strings.
    */
-  public void work() {
+  public Set<String> work() {
     workers.forEach(Person::work);
     try {
       Thread.sleep(workingTime);
@@ -46,8 +47,6 @@ public class Pizzeria {
     }
     workers.forEach(Person::stop);
 
-    for (String string : statistician.getStats()) {
-      System.out.println(string);
-    }
+    return statistician.getStats();
   }
 }

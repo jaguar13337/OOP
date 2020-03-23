@@ -1,8 +1,6 @@
 package ru.nsu.fit.g18214.yakovlev.analyst;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -19,68 +17,69 @@ public class Statistician {
 
   private long maxDiff;
 
-  private Set<String> strings;
-  private Map<UUID, Statistics> statisticsMap;
+  private Set<String> statisticsAndAdvises;
+  private Map<UUID, Statistics> statisticsByUUIDMap;
 
   public Statistician(JournalList journal, long maxDiff) {
-    statisticsMap = new HashMap<>();
+    this.statisticsByUUIDMap = new HashMap<>();
     this.journal = journal;
     this.maxDiff = maxDiff;
-    this.strings = new TreeSet<>();
+    this.statisticsAndAdvises = new TreeSet<>();
   }
-
 
 
   public Set<String> getStats() {
     for (Record record : journal) {
-      statisticsMap.putIfAbsent(record.getUuid(), new Statistics());
+      statisticsByUUIDMap.putIfAbsent(record.getUuid(), new Statistics());
       switch (record.getState()) {
         case TAKEN:
-          statisticsMap.get(record.getUuid()).addTaken();
-          if (statisticsMap.get(record.getUuid()).getLastDoingTime() != 0L
-              && record.getTime() - statisticsMap.get(record.getUuid()).getLastDoingTime()
-                  > maxDiff) {
-            strings.add(String.format(firedTip, record.getUuid()));
+          statisticsByUUIDMap.get(record.getUuid()).addTaken();
+          if (statisticsByUUIDMap.get(record.getUuid()).getLastDoingTime() != 0L
+            && record.getTime() - statisticsByUUIDMap.get(record.getUuid()).getLastDoingTime()
+            > maxDiff) {
+            statisticsAndAdvises.add(String.format(firedTip, record.getUuid()));
           }
           break;
         case COOKED:
         case DELIVERED:
-          statisticsMap.get(record.getUuid()).addFinished();
+          statisticsByUUIDMap.get(record.getUuid()).addFinished();
           break;
         case STORED:
-          if (record.getTime() - statisticsMap.get(record.getUuid()).getLastDoingTime() > maxDiff) {
-            strings.add(storageTip);
+          if (record.getTime() - statisticsByUUIDMap.get(record.getUuid()).getLastDoingTime() > maxDiff) {
+            statisticsAndAdvises.add(storageTip);
           }
           break;
         case DROPPED:
-          statisticsMap.get(record.getUuid()).addDropped();
+          statisticsByUUIDMap.get(record.getUuid()).addDropped();
           break;
         case QUEUED:
-          if (record.getTime() - statisticsMap.get(record.getUuid()).getLastDoingTime()
-              > maxDiff) {
-            strings.add(hiredTIp);
+          if (record.getTime() - statisticsByUUIDMap.get(record.getUuid()).getLastDoingTime()
+            > maxDiff) {
+            statisticsAndAdvises.add(hiredTIp);
           }
           break;
         case GENERATED:
-          statisticsMap.get(record.getUuid()).setLastDoingTime(record.getTime());
+          statisticsByUUIDMap.get(record.getUuid()).makeGenerated();
+          statisticsByUUIDMap.get(record.getUuid()).setLastDoingTime(record.getTime());
           break;
         default:
           throw new IllegalArgumentException(record.getState().toString());
       }
 
-      statisticsMap.get(record.getUuid()).setLastDoingTime(record.getTime());
+      statisticsByUUIDMap.get(record.getUuid()).setLastDoingTime(record.getTime());
     }
 
-    for (UUID uuid : statisticsMap.keySet()) {
-      strings.add(
+    for (UUID uuid : statisticsByUUIDMap.keySet()) {
+      if (!statisticsByUUIDMap.get(uuid).isGenerated()) {
+        statisticsAndAdvises.add(
           String.format(
-              "[WORKER %s] took [%d] finished [%d] and dropped [%d] orders.",
-              uuid.toString(),
-              statisticsMap.get(uuid).getTakenCount(),
-              statisticsMap.get(uuid).getFinishedCount(),
-              statisticsMap.get(uuid).getDroppedCount()));
+            "[WORKER %s] took [%d] finished [%d] and dropped [%d] orders.",
+            uuid.toString(),
+            statisticsByUUIDMap.get(uuid).getTakenCount(),
+            statisticsByUUIDMap.get(uuid).getFinishedCount(),
+            statisticsByUUIDMap.get(uuid).getDroppedCount()));
+      }
     }
-
-    return strings;
+    return statisticsAndAdvises;
   }
 }

@@ -18,50 +18,41 @@ public class PizzeriaConfig {
   private PizzeriaConfig() {
   }
 
-  public int getGeneratorSpeed()  {
-    if (generatorSpeed == null) {
-      throw new IllegalArgumentException();
-    }
+  public int getGeneratorSpeed() {
     return generatorSpeed;
   }
 
   public int getWorkingTime() {
-    if (workingTime == null) {
-      throw new IllegalArgumentException();
-    }
     return workingTime;
   }
 
   public int getStorageCapacity() {
-    if (storageCapacity == null) {
-      throw new IllegalArgumentException();
-    }
     return storageCapacity;
   }
 
   public int getQueueCapacity() {
-    if (queueCapacity == null) {
-      throw new IllegalArgumentException();
-    }
     return queueCapacity;
   }
 
   public List<Integer> getBakers() {
-    if (bakersValues == null) {
-      throw new IllegalArgumentException();
-    }
     return bakersValues;
   }
 
   public List<CourierConfig> getCouriers() {
-    if (couriers == null) {
-      throw new IllegalArgumentException();
-    }
     return couriers;
   }
 
   public static PizzeriaConfig makeConfig(Reader reader) {
     Gson gson = new Gson();
-    return gson.fromJson(reader, PizzeriaConfig.class);
+    PizzeriaConfig pizzeriaConfig = gson.fromJson(reader, PizzeriaConfig.class);
+    if (pizzeriaConfig.getCouriers() == null ||
+      pizzeriaConfig.getWorkingTime() == 0 ||
+      pizzeriaConfig.getBakers() == null ||
+      pizzeriaConfig.getGeneratorSpeed() == 0 ||
+      pizzeriaConfig.getStorageCapacity() == 0 ||
+      pizzeriaConfig.getBakers() == null) {
+      throw new IllegalArgumentException();
+    }
+    return pizzeriaConfig;
   }
 }

@@ -15,7 +15,9 @@ public class Main {
     try {
       Pizzeria pizzeria =
           new Pizzeria(PizzeriaConfig.makeConfig(new FileReader(args[0])), new JournalList());
-      pizzeria.work();
+      for (String stat : pizzeria.work()) {
+        System.out.println(stat);
+      }
     } catch (FileNotFoundException e) {
       System.out.println(String.format("File %s doesn't exist", args[0]));
     }

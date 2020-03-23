@@ -5,15 +5,25 @@ class Statistics {
   private int takenCount;
   private int finishedCount;
   private long lastDoingTime;
+  private boolean generated;
 
   Statistics() {
     finishedCount = droppedCount = takenCount = 0;
     lastDoingTime = 0L;
   }
 
+  public boolean isGenerated() {
+    return generated;
+  }
+
+  public void makeGenerated() {
+    this.generated = true;
+  }
+
   void addFinished() {
     finishedCount++;
   }
+
 
   int getDroppedCount() {
     return droppedCount;
