@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import ru.nsu.fit.g18214.yakovlev.journal.Journal;
 import ru.nsu.fit.g18214.yakovlev.journal.Record;
+
 /**
  * Journal realisation on list.
  * Iterable isn't thread safe, so you must iterate only, when records stopped added.

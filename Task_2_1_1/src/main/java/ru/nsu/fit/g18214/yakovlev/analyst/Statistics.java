@@ -12,11 +12,11 @@ class Statistics {
     lastDoingTime = 0L;
   }
 
-  public boolean isGenerated() {
+  boolean isGenerated() {
     return generated;
   }
 
-  public void makeGenerated() {
+  void makeGenerated() {
     this.generated = true;
   }
 
