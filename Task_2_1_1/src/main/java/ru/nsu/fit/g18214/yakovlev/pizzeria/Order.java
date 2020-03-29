@@ -1,14 +1,14 @@
 package ru.nsu.fit.g18214.yakovlev.pizzeria;
 
-class Order {
+public class Order {
 
   private int orderNum;
 
-  int getOrderNum() {
+  public int getOrderNum() {
     return orderNum;
   }
 
-  Order(int orderNum) {
+  public Order(int orderNum) {
     this.orderNum = orderNum;
   }
 }

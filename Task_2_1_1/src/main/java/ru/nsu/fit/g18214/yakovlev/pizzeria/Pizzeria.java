@@ -7,6 +7,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import ru.nsu.fit.g18214.yakovlev.analyst.JournalList;
 import ru.nsu.fit.g18214.yakovlev.analyst.Statistician;
+import ru.nsu.fit.g18214.yakovlev.pizzeria.workers.Baker;
+import ru.nsu.fit.g18214.yakovlev.pizzeria.workers.Courier;
+import ru.nsu.fit.g18214.yakovlev.pizzeria.workers.OrderGenerator;
+import ru.nsu.fit.g18214.yakovlev.pizzeria.workers.Person;
 
 public class Pizzeria {
 
