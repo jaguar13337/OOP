@@ -21,7 +21,7 @@ public class Main {
     } catch (FileNotFoundException e) {
       System.out.println(String.format("File %s doesn't exist", args[0]));
     } catch (IllegalArgumentException e) {
-      System.out.println(String.format("JSON config %s isn't full", args[0]));
+      System.out.println(e.getMessage());
     }
   }
 }

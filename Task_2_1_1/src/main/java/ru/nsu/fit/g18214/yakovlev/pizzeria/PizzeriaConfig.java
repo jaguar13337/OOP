@@ -45,13 +45,13 @@ public class PizzeriaConfig {
   public static PizzeriaConfig makeConfig(Reader reader) {
     Gson gson = new Gson();
     PizzeriaConfig pizzeriaConfig = gson.fromJson(reader, PizzeriaConfig.class);
-    if (pizzeriaConfig.getCouriers() == null ||
-      pizzeriaConfig.getWorkingTime() == 0 ||
-      pizzeriaConfig.getBakers() == null ||
-      pizzeriaConfig.getGeneratorSpeed() == 0 ||
-      pizzeriaConfig.getStorageCapacity() == 0 ||
-      pizzeriaConfig.getBakers() == null) {
-      throw new IllegalArgumentException();
+    if (pizzeriaConfig.getCouriers() == null
+      || pizzeriaConfig.getWorkingTime() == 0
+      || pizzeriaConfig.getBakers() == null
+      || pizzeriaConfig.getGeneratorSpeed() == 0
+      || pizzeriaConfig.getStorageCapacity() == 0
+      || pizzeriaConfig.getBakers() == null) {
+      throw new IllegalArgumentException("Error in config file");
     }
     return pizzeriaConfig;
   }
