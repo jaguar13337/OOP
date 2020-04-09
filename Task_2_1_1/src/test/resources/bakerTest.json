@@ -1,0 +1,11 @@
+{
+  "workingTime": 510,
+  "storageCapacity": 1,
+  "queueCapacity": 50,
+  "generatorSpeed": 350,
+  "bakersValues": [
+    500
+  ],
+  "couriers": [
+  ]
+}
