@@ -20,7 +20,7 @@ public class Main extends Application{
     controller.canvas.setHeight(FieldController.getHeigth());
     controller.canvas.setWidth(FieldController.getWidth());
     Scene scene = new Scene(root, FieldController.getWidth(), FieldController.getHeigth());
-    scene.setOnKeyPressed(controller::keyHandler);
+    scene.setOnKeyTyped(controller::keyHandler);
     primaryStage.setScene(scene);
     primaryStage.setResizable(false);
     primaryStage.setMaximized(true);

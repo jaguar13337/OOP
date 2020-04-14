@@ -53,7 +53,7 @@ public class FieldController {
         GameLogic.startGame(canvas.getGraphicsContext2D());
         break;
       case H:
-        GameLogic.changeHelp();
+        GameLogic.changeState(State.HELP);
         break;
       case W:
       case UP:
@@ -72,7 +72,7 @@ public class FieldController {
         GameLogic.setDirection(Directions.RIGHT);
         break;
       case SPACE:
-        GameLogic.changePause();
+        GameLogic.changeState(State.PAUSE);
         break;
       default:
         break;
