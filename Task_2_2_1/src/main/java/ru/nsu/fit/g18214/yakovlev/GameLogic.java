@@ -35,7 +35,9 @@ class GameLogic {
   private static State gameState = State.Nothing;
 
   static void setDirection(Directions dir) {
-    dirsQueue.add(dir);
+    if (dirsQueue.size() == 0 || dirsQueue.get(dirsQueue.size() -1) != dir) {
+      dirsQueue.add(dir);
+    }
   }
 
   static void changeState(State newState) {
@@ -75,7 +77,7 @@ class GameLogic {
     gc.fillText("PAUSE", FieldController.getWidth() / 2, FieldController.getHeigth() / 2);
   }
 
-  static private void putHelp(GraphicsContext gc) {
+  static void putHelp(GraphicsContext gc) {
     clearField(gc);
 
     gc.setFill(Color.RED);

@@ -79,4 +79,8 @@ public class FieldController {
     }
     event.consume();
   }
+
+  public void initialize() {
+    GameLogic.putHelp(canvas.getGraphicsContext2D());
+  }
 }
