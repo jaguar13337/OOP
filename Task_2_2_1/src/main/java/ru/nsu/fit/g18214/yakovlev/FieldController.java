@@ -1,29 +1,46 @@
 package ru.nsu.fit.g18214.yakovlev;
 
-import java.awt.Toolkit;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 
 public class FieldController {
-  private static final double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-  private static final double heigth = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+  private static double width = 640;
+  private static double height = 480;
+
+  static void setWidth(double width) {
+    FieldController.width = width;
+    recountCellWidth();
+    GameLogic.recountFontSize();
+  }
+
+  static void setHeight(double height) {
+    FieldController.height = height;
+    recountCellHeight();
+    GameLogic.recountFontSize();
+  }
+
   private static final int cellHeightCnt = 20;
   private static final int cellWidthCnt = 40;
 
   static int getCellHeight() {
     return cellHeight;
   }
-
   static int getCellWidth() {
     return cellWidth;
   }
 
-  private static final int cellHeight = (int) (heigth / cellHeightCnt);
-  private static final int cellWidth = (int) (width / cellWidthCnt);
+  private static int cellHeight = (int) (height / cellHeightCnt);
+  private static int cellWidth = (int) (width / cellWidthCnt);
 
+  private static void recountCellWidth() {
+    cellWidth = (int)(width/cellWidthCnt);
+  }
 
+  private static void recountCellHeight() {
+    cellHeight = (int)(height /cellHeight);
+  }
   public FieldController() {
   }
   @FXML
@@ -43,8 +60,8 @@ public class FieldController {
     return width;
   }
 
-  static double getHeigth() {
-    return heigth;
+  static double getHeight() {
+    return height;
   }
 
   public void keyHandler(KeyEvent event) {
@@ -81,6 +98,6 @@ public class FieldController {
   }
 
   public void initialize() {
-    GameLogic.putHelp(canvas.getGraphicsContext2D());
+    GameLogic.startMenu(canvas.getGraphicsContext2D());
   }
 }

@@ -29,10 +29,14 @@ class GameLogic {
   private static int cellCntHeight = FieldController.getCellHeightCnt();
   private static List<Directions> dirsQueue;
 
-  private static final double fontSize = FieldController.getHeigth()*FieldController.getWidth()/69120;
+  private static double fontSize = FieldController.getHeight()*FieldController.getWidth();
+
+  static void recountFontSize() {
+    fontSize = FieldController.getHeight()*FieldController.getWidth()/69120;
+  }
 
   private static Fruit fruit;
-  private static State gameState = State.Nothing;
+  private static State gameState = State.NOTHING;
 
   static void setDirection(Directions dir) {
     if (dirsQueue.size() == 0 || dirsQueue.get(dirsQueue.size() -1) != dir) {
@@ -42,7 +46,7 @@ class GameLogic {
 
   static void changeState(State newState) {
     if (gameState.equals(newState)) {
-      gameState = State.Nothing;
+      gameState = State.NOTHING;
     } else {
       gameState = newState;
     }
@@ -71,23 +75,50 @@ class GameLogic {
 
   static private void putPause(GraphicsContext gc) {
     clearField(gc);
-
     gc.setFill(Color.RED);
     gc.setFont(new Font("", fontSize));
-    gc.fillText("PAUSE", FieldController.getWidth() / 2, FieldController.getHeigth() / 2);
+    gc.fillText("PAUSE", FieldController.getWidth() / 2, FieldController.getHeight() / 2);
   }
 
   static void putHelp(GraphicsContext gc) {
     clearField(gc);
-
     gc.setFill(Color.RED);
     gc.setFont(new Font("", fontSize));
-    gc.fillText(rules, FieldController.getWidth() / 2, FieldController.getHeigth() / 2);
+    gc.fillText(rules, FieldController.getWidth() / 2, FieldController.getHeight() / 2);
   }
 
   static private void clearField(GraphicsContext gc) {
     gc.setFill(Color.BLACK);
-    gc.fillRect(0, 0, FieldController.getWidth(), FieldController.getHeigth());
+    gc.fillRect(0, 0, FieldController.getWidth(), FieldController.getHeight());
+  }
+
+  static void startMenu(GraphicsContext gc) {
+    if (timer != null) {
+      timer.stop();
+    }
+
+    timer = new AnimationTimer() {
+      long tick = 0;
+      @Override
+      public void handle(long curr) {
+        if (tick == 0) {
+          tick = curr;
+          menuTick(gc);
+          return;
+        }
+        if (curr - tick > 100000000) {
+          tick = curr;
+          menuTick(gc);
+        }
+      }
+    };
+
+    timer.start();
+  }
+
+
+  private static void menuTick(GraphicsContext gc) {
+    putHelp(gc);
   }
 
   static void startGame(GraphicsContext gc) {
@@ -103,8 +134,7 @@ class GameLogic {
 
     speed = 5;
     newFood();
-    //TODO load from config
-    gameState = State.Nothing;
+    changeState(State.NOTHING);
 
     timer = new AnimationTimer() {
       long tick = 0;
@@ -131,7 +161,7 @@ class GameLogic {
       putHelp(gc);
     } else if (gameState == State.PAUSE) {
       putPause(gc);
-    } else if (gameState == State.Nothing) {
+    } else if (gameState == State.NOTHING) {
       if (dirsQueue.size() > 0) {
         prevDir = direction;
         direction = dirsQueue.remove(0);
@@ -191,7 +221,6 @@ class GameLogic {
       }
       //FILL
       clearField(gc);
-
       showScore(gc);
 
       gc.setFill(fruit.getColor());
@@ -210,9 +239,10 @@ class GameLogic {
 
 
     } else if (gameState == State.GAMEOVER){
+      clearField(gc);
       gc.setFill(Color.RED);
       gc.setFont(new Font("", fontSize));
-      gc.fillText("GAME OVER", FieldController.getWidth() / 2, FieldController.getHeigth() / 2);
+      gc.fillText("GAME OVER", 0, FieldController.getHeight() / 2);
     }
 
 

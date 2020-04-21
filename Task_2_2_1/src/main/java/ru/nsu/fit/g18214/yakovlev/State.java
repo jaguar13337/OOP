@@ -4,5 +4,5 @@ public enum State {
   PAUSE,
   HELP,
   GAMEOVER,
-  Nothing
+  NOTHING
 }
