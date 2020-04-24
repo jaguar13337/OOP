@@ -12,8 +12,8 @@ import javafx.scene.text.Font;
 public class FieldController {
   public FieldController() {
   }
-  private static final String rules = "This is the game of Snake Game.\n" +
-    "You need to score the most points. For that you have to eat apples.\n" +
+  private static final String rules = "This is the rule of Snake Game.\n" +
+    "You need to score the most points.\nFor that you have to eat apples.\n" +
     "Controls:\nW or Up Arrow -> moving up\nA or Left Arrow -> moving left\n" +
     "D or Right Arrow -> moving right\nS or Down Arrow -> moving down\n" +
     "For reading rules again, press H\nGame Restart -> R\nGame Pause -> SPACE\n";
@@ -73,6 +73,7 @@ public class FieldController {
     switch (GameLogic.getState()) {
       case HELP:
         help.setText(rules);
+        break;
       case PAUSE:
         shortInfo.setText("PAUSE");
         break;
@@ -137,6 +138,7 @@ public class FieldController {
     shortInfo.setScaleX(scale);
     shortInfo.setScaleY(scale);
     score.setFont(new Font("", 20 * scale));
+    help.setFont(new Font("", 10 * scale));
   }
 
 
@@ -145,5 +147,7 @@ public class FieldController {
     ChangeListener<Number> listener = ((observable, oldValue, newValue) -> rescaleFieldSize());
     box.widthProperty().addListener(listener);
     box.heightProperty().addListener(listener);
+    GameLogic.changeState(State.HELP);
+    handleGameState();
   }
 }
