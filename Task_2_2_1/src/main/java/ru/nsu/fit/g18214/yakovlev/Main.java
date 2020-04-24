@@ -17,22 +17,8 @@ public class Main extends Application {
     FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getClassLoader().getResource("field.fxml")));
     Parent root = loader.load();
     FieldController controller = loader.getController();
-    Scene scene = new Scene(root, FieldController.getWidth(), FieldController.getHeight());
+    Scene scene = new Scene(root);
     scene.setOnKeyPressed(controller::keyHandler);
-    FieldController.setWidth(scene.getWidth());
-    FieldController.setHeight(scene.getHeight());
-    scene.widthProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        FieldController.setWidth(scene.getWidth());
-      }
-    });
-    scene.heightProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        FieldController.setHeight(scene.getHeight());
-      }
-    });
     primaryStage.setScene(scene);
     primaryStage.setTitle("Snake");
     primaryStage.show();

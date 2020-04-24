@@ -1,34 +1,31 @@
 package ru.nsu.fit.g18214.yakovlev;
 
+
 import javafx.scene.paint.Paint;
 
-public class Apple implements Fruit {
+public class Apple extends Fruit{
 
-  private int x;
-  private int y;
+  @Override
+  public int getAddedSpeed() {
+    return 0;
+  }
+
+  @Override
+  public int getScoreCount() {
+    return 10;
+  }
+
+  @Override
+  public int getSizeAdded() {
+    return 1;
+  }
 
   Apple(int x, int y) {
-    this.x = x;
-    this.y = y;
+    super(x, y);
   }
 
   @Override
-  public int getX() {
-    return x;
-  }
-
-  @Override
-  public int getY() {
-    return y;
-  }
-
-  @Override
-  public Paint getColor() {
-    return Paint.valueOf("red");
-  }
-
-  @Override
-  public int eat() {
-    return 1;
+  Paint getColor() {
+    return Paint.valueOf("yellow");
   }
 }

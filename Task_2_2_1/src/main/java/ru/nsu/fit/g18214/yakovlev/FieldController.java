@@ -1,92 +1,64 @@
 package ru.nsu.fit.g18214.yakovlev;
 
+import javafx.animation.AnimationTimer;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 
 public class FieldController {
-  private static double width = 640;
-  private static double height = 480;
-
-  static void setWidth(double width) {
-    FieldController.width = width;
-    recountCellWidth();
-    GameLogic.recountFontSize();
-  }
-
-  static void setHeight(double height) {
-    FieldController.height = height;
-    recountCellHeight();
-    GameLogic.recountFontSize();
-  }
-
-  private static final int cellHeightCnt = 20;
-  private static final int cellWidthCnt = 40;
-
-  static int getCellHeight() {
-    return cellHeight;
-  }
-  static int getCellWidth() {
-    return cellWidth;
-  }
-
-  private static int cellHeight = (int) (height / cellHeightCnt);
-  private static int cellWidth = (int) (width / cellWidthCnt);
-
-  private static void recountCellWidth() {
-    cellWidth = (int)(width/cellWidthCnt);
-  }
-
-  private static void recountCellHeight() {
-    cellHeight = (int)(height /cellHeight);
-  }
   public FieldController() {
   }
+  private static final String rules = "This is the game of Snake Game.\n" +
+    "You need to score the most points. For that you have to eat apples.\n" +
+    "Controls:\nW or Up Arrow -> moving up\nA or Left Arrow -> moving left\n" +
+    "D or Right Arrow -> moving right\nS or Down Arrow -> moving down\n" +
+    "For reading rules again, press H\nGame Restart -> R\nGame Pause -> SPACE\n";
+
+  private int CELL_SIZE;
+  private AnimationTimer timer;
+
   @FXML
-  VBox box;
+  private HBox box;
+
   @FXML
-  Canvas canvas;
+  private Pane gameField;
 
-  static int getCellWidthCnt() {
-    return cellWidthCnt;
-  }
+  @FXML
+  private Label shortInfo;
 
-  static int getCellHeightCnt() {
-    return cellHeightCnt;
-  }
+  @FXML
+  private Label help;
 
-  static double getWidth() {
-    return width;
-  }
-
-  static double getHeight() {
-    return height;
-  }
+  @FXML
+  private Label score;
 
   public void keyHandler(KeyEvent event) {
     switch (event.getCode()) {
       case R:
-        GameLogic.startGame(canvas.getGraphicsContext2D());
+        startGame();
         break;
       case H:
         GameLogic.changeState(State.HELP);
         break;
       case W:
       case UP:
-        GameLogic.setDirection(Directions.UP);
+        GameLogic.addDir(Directions.UP);
         break;
       case S:
       case DOWN:
-        GameLogic.setDirection(Directions.DOWN);
+        GameLogic.addDir(Directions.DOWN);
         break;
       case A:
       case LEFT:
-        GameLogic.setDirection(Directions.LEFT);
+        GameLogic.addDir(Directions.LEFT);
         break;
       case D:
       case RIGHT:
-        GameLogic.setDirection(Directions.RIGHT);
+        GameLogic.addDir(Directions.RIGHT);
         break;
       case SPACE:
         GameLogic.changeState(State.PAUSE);
@@ -97,7 +69,81 @@ public class FieldController {
     event.consume();
   }
 
+  private void handleGameState() {
+    switch (GameLogic.getState()) {
+      case HELP:
+        help.setText(rules);
+      case PAUSE:
+        shortInfo.setText("PAUSE");
+        break;
+      case GAMEOVER:
+        shortInfo.setText("GAME OVER");
+        break;
+      case NOTHING:
+        shortInfo.setText("");
+        help.setText("");
+        break;
+    }
+  }
+
+  private void startGame() {
+
+    if (timer != null) {
+      timer.stop();
+    }
+
+    GameLogic.initializeField();
+    for (GameObject[] gameObjects : GameLogic.getGameObjects()) {
+      for (GameObject gameObject : gameObjects) {
+        gameObject.setSize(CELL_SIZE);
+        gameField.getChildren().add(gameObject);
+      }
+    }
+
+    GameLogic.gameInit();
+
+    timer = new AnimationTimer() {
+      long tick = 0;
+
+      @Override
+      public void handle(long curr) {
+        if (tick == 0) {
+          tick = curr;
+          GameLogic.gameTick();
+        } else if (curr - tick > GameLogic.getTimerToTick()) {
+          tick = curr;
+          GameLogic.gameTick();
+        }
+        handleGameState();
+        score.setText(GameLogic.getScore().toString());
+      }
+    };
+
+    timer.start();
+
+  }
+
+
+  private void rescaleFieldSize() {
+    double scale;
+    if (gameField.getPrefWidth() / gameField.getPrefHeight()
+      > box.getWidth() / box.getHeight()) {
+      scale = box.getWidth() / gameField.getPrefWidth();
+    } else {
+      scale = box.getHeight() / gameField.getPrefHeight();
+    }
+    gameField.setScaleX(scale);
+    gameField.setScaleY(scale);
+    shortInfo.setScaleX(scale);
+    shortInfo.setScaleY(scale);
+    score.setFont(new Font("", 20 * scale));
+  }
+
+
   public void initialize() {
-    GameLogic.startMenu(canvas.getGraphicsContext2D());
+    CELL_SIZE = (int) gameField.getPrefWidth() / GameLogic.getCellCnt();
+    ChangeListener<Number> listener = ((observable, oldValue, newValue) -> rescaleFieldSize());
+    box.widthProperty().addListener(listener);
+    box.heightProperty().addListener(listener);
   }
 }

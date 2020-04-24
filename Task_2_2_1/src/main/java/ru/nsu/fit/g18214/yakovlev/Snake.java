@@ -2,49 +2,119 @@ package ru.nsu.fit.g18214.yakovlev;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Paint;
 
-public class Snake {
-  private List<Rectangle> snakeBody;
+class Snake {
+  private List<Coord> snakeBody;
+  private int score = 0;
+  private int speed = 5;
+  private int len = 1;
+  private static Directions direction;
+  private static Directions prevDir;
 
+  void setDirection(Directions dir) {
+    prevDir = direction;
+    direction = dir;
+  }
 
-  public Snake(int currX, int currY) {
+  Snake(int currX, int currY) {
     snakeBody = new ArrayList<>();
-    addBody(currX, currY);
+    for (int i = 0; i < len; i++) {
+      addBody(currX, currY);
+    }
+    direction = Directions.UP;
+  }
+
+  public int getScore() {
+    return score;
+  }
+
+  public int getSpeed() {
+    return speed;
+  }
+
+  public int getLen() {
+    return len;
+  }
+
+  void eatFruit(Fruit fruit) {
+    speed += fruit.getAddedSpeed();
+    len += fruit.getSizeAdded();
+    for (int i = 0; i < fruit.getSizeAdded(); i++) {
+      addBody(getSnakeHeadX(), getSnakeHeadY());
+    }
+    score += fruit.getScoreCount();
+  }
+
+  Coord move() {
+    switch (direction) {
+      case UP:
+        if (prevDir != Directions.DOWN) {
+          addBody(getSnakeHeadX(), getSnakeHeadY() - 1);
+        } else {
+          addBody(getSnakeHeadX(), getSnakeHeadY() + 1);
+          direction = Directions.DOWN;
+        }
+        break;
+      case DOWN:
+        if (prevDir != Directions.UP) {
+          addBody(getSnakeHeadX(), getSnakeHeadY() + 1);
+        } else {
+          addBody(getSnakeHeadX(), getSnakeHeadY() - 1);
+          direction = Directions.UP;
+        }
+        break;
+      case LEFT:
+        if (prevDir != Directions.RIGHT) {
+          addBody(getSnakeHeadX() - 1, getSnakeHeadY());
+        } else {
+          addBody(getSnakeHeadX() + 1, getSnakeHeadY());
+          direction = Directions.RIGHT;
+        }
+        break;
+      case RIGHT:
+        if (prevDir != Directions.LEFT) {
+          addBody(getSnakeHeadX() + 1, getSnakeHeadY());
+        } else {
+          addBody(getSnakeHeadX() - 1, getSnakeHeadY());
+          direction = Directions.LEFT;
+        }
+        break;
+    }
+    return snakeBody.remove(snakeBody.size() - 1);
   }
 
   void addBody(int currX, int currY) {
-    Rectangle rectangle = new Rectangle();
-    rectangle.setX(currX);
-    rectangle.setY(currY);
+    Coord coord = new Coord(currX, currY);
     if (snakeBody.size() > 0 && (currX == getSnakeHeadX() || currY == getSnakeHeadY())) {
-      snakeBody.add(0, rectangle);
+      snakeBody.add(0, coord);
     } else {
-      snakeBody.add(rectangle);
+      snakeBody.add(coord);
     }
   }
 
   int getSnakeHeadX() {
-    return (int) snakeBody.get(0).getX();
+    return snakeBody.get(0).getX();
   }
 
   int getSnakeHeadY() {
-    ;
-    return (int) snakeBody.get(0).getY();
+    return snakeBody.get(0).getY();
   }
 
-  double getSnakeBodyX(int i) {
+  int getSnakeBodyX(int i) {
     return snakeBody.get(i).getX();
   }
 
-
-  double getSnakeBodyY(int i) {
+  int getSnakeBodyY(int i) {
     return snakeBody.get(i).getY();
   }
 
-
-  public List<Rectangle> getSnakeBody() {
+  List<Coord> getSnakeBody() {
     return snakeBody;
+  }
+
+  Paint getColor() {
+    return Paint.valueOf("saddlebrown");
   }
 
 }
