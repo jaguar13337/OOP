@@ -2,8 +2,6 @@ package ru.nsu.fit.g18214.yakovlev;
 
 import java.util.Objects;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

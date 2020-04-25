@@ -11,6 +11,7 @@ class Snake {
   private int len = 1;
   private static Directions direction;
   private static Directions prevDir;
+  private List<Coord> mustBeRemoved;
 
   void setDirection(Directions dir) {
     prevDir = direction;
@@ -23,13 +24,14 @@ class Snake {
       addBody(currX, currY);
     }
     direction = Directions.UP;
+    mustBeRemoved = new ArrayList<>();
   }
 
-  public int getScore() {
+  int getScore() {
     return score;
   }
 
-  public int getSpeed() {
+  int getSpeed() {
     return speed;
   }
 
@@ -37,13 +39,29 @@ class Snake {
     return len;
   }
 
-  void eatFruit(Fruit fruit) {
-    speed += fruit.getAddedSpeed();
-    len += fruit.getSizeAdded();
-    for (int i = 0; i < fruit.getSizeAdded(); i++) {
-      addBody(getSnakeHeadX(), getSnakeHeadY());
+  List<Coord> eatFruit(Fruit fruit) {
+    mustBeRemoved.clear();
+    if (speed + fruit.getAddedSpeed() >= 1) {
+      speed += fruit.getAddedSpeed();
+    } else {
+      speed = 1;
+    }
+    if (fruit.getSizeAdded() < 0) {
+      for (int i = 0; i < -fruit.getSizeAdded(); i++) {
+        if (len == 1) {
+          break;
+        }
+        mustBeRemoved.add(snakeBody.remove(snakeBody.size() - 1));
+        len--;
+      }
+    } else {
+      len += fruit.getSizeAdded();
+      for (int i = 0; i < fruit.getSizeAdded(); i++) {
+        addBody(getSnakeHeadX(), getSnakeHeadY());
+      }
     }
     score += fruit.getScoreCount();
+    return mustBeRemoved;
   }
 
   Coord move() {
@@ -84,7 +102,7 @@ class Snake {
     return snakeBody.remove(snakeBody.size() - 1);
   }
 
-  void addBody(int currX, int currY) {
+  private void addBody(int currX, int currY) {
     Coord coord = new Coord(currX, currY);
     if (snakeBody.size() > 0 && (currX == getSnakeHeadX() || currY == getSnakeHeadY())) {
       snakeBody.add(0, coord);

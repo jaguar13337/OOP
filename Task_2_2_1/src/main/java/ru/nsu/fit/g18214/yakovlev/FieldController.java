@@ -13,10 +13,11 @@ public class FieldController {
   public FieldController() {
   }
   private static final String rules = "This is the rule of Snake Game.\n" +
-    "You need to score the most points.\nFor that you have to eat apples.\n" +
-    "Controls:\nW or Up Arrow -> moving up\nA or Left Arrow -> moving left\n" +
-    "D or Right Arrow -> moving right\nS or Down Arrow -> moving down\n" +
-    "For reading rules again, press H\nGame Restart -> R\nGame Pause -> SPACE\n";
+    "You need to score the most points.\nFor that you have to eat fruits.\n" +
+    "Controls:\nW or Up -> moving up\nA or Left -> moving left\n" +
+    "D or Right -> moving right\nS or Down -> moving down\n" +
+    "For reading rules again, press H\nGame Restart -> R\nGame Pause -> SPACE\n" +
+    "Good luck!";
 
   private int CELL_SIZE;
   private AnimationTimer timer;
@@ -94,7 +95,8 @@ public class FieldController {
     }
 
     GameLogic.initializeField();
-    for (GameObject[] gameObjects : GameLogic.getGameObjects()) {
+    gameField.getChildren().clear();
+    for (GameObject[] gameObjects : GameLogic.getGameObjectsField()) {
       for (GameObject gameObject : gameObjects) {
         gameObject.setSize(CELL_SIZE);
         gameField.getChildren().add(gameObject);

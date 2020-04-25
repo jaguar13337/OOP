@@ -3,20 +3,20 @@ package ru.nsu.fit.g18214.yakovlev;
 
 import javafx.scene.paint.Paint;
 
-public class Apple extends Fruit{
+class Apple extends Fruit {
 
   @Override
-  public int getAddedSpeed() {
+  int getAddedSpeed() {
     return 0;
   }
 
   @Override
-  public int getScoreCount() {
+  int getScoreCount() {
     return 10;
   }
 
   @Override
-  public int getSizeAdded() {
+  int getSizeAdded() {
     return 1;
   }
 
@@ -26,6 +26,6 @@ public class Apple extends Fruit{
 
   @Override
   Paint getColor() {
-    return Paint.valueOf("yellow");
+    return Paint.valueOf("red");
   }
 }

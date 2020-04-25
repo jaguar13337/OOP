@@ -38,7 +38,10 @@
                               </Label>
                            </children>
                         </StackPane>
-                        <Label fx:id="help" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textAlignment="JUSTIFY" textFill="RED" wrapText="true" HBox.hgrow="NEVER" />
+                        <Label fx:id="help" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textAlignment="JUSTIFY" textFill="RED" textOverrun="WORD_ELLIPSIS" wrapText="true" HBox.hgrow="NEVER">
+                           <font>
+                              <Font size="10.0" />
+                           </font></Label>
                      </children>
                   </HBox>
                </children>

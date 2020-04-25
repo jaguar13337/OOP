@@ -10,16 +10,16 @@ class GameLogic {
   private static final int CELL_CNT = 25;
   private static final int timerToTick = 1000000000;
   private static Random random = new Random();
-  private static final int fruitCount = 1;
+  private static final int fruitCount = 4;
   private static Snake snake;
   private static List<Fruit> fruits;
   private static State gameState = State.NOTHING;
-  private static GameObject[][] gameObjects;
+  private static GameObject[][] gameObjectsField;
   private static List<Directions> dirsQueue;
 
 
-  static GameObject[][] getGameObjects() {
-    return gameObjects;
+  static GameObject[][] getGameObjectsField() {
+    return gameObjectsField;
   }
 
   static void addDir(Directions dir) {
@@ -53,14 +53,14 @@ class GameLogic {
   }
 
   static void initializeField() {
-    gameObjects = new GameObject[CELL_CNT][CELL_CNT];
+    gameObjectsField = new GameObject[CELL_CNT][CELL_CNT];
     for (int i = 0; i < CELL_CNT; i++) {
       for (int j = 0; j < CELL_CNT; j++) {
-        gameObjects[i][j] = new GameObject(i, j);
+        gameObjectsField[i][j] = new GameObject(i, j);
         if ((i + j) % 2 == 1) {
-          gameObjects[i][j].setDefFill(Paint.valueOf("green"));
+          gameObjectsField[i][j].setDefFill(Paint.valueOf("green"));
         } else {
-          gameObjects[i][j].setDefFill(Paint.valueOf("green"));
+          gameObjectsField[i][j].setDefFill(Paint.valueOf("green"));
         }
       }
     }
@@ -71,12 +71,23 @@ class GameLogic {
       while (true) {
         int x = random.nextInt(CELL_CNT);
         int y = random.nextInt(CELL_CNT);
-        Fruit fruit = new Apple(x, y);
-        if (gameObjects[x][y].getType() == ObjectType.SNAKE) {
+        Fruit fruit = null;
+        switch (random.nextInt(3)) {
+          case 0:
+            fruit = new Apple(x, y);
+            break;
+          case 1:
+            fruit = new Banana(x,y);
+            break;
+          case 2:
+            fruit = new Cranberry(x,y);
+            break;
+        }
+        if (gameObjectsField[x][y].getType() != ObjectType.EMPTY) {
           continue;
         }
         fruits.add(fruit);
-        gameObjects[x][y].setType(ObjectType.FOOD, fruits.get(fruits.size() - 1).getColor());
+        gameObjectsField[x][y].setType(ObjectType.FOOD, fruits.get(fruits.size() - 1).getColor());
         break;
       }
     }
@@ -88,7 +99,7 @@ class GameLogic {
     dirsQueue = new ArrayList<>();
     gameState = State.NOTHING;
     for (Coord coord : snake.getSnakeBody()) {
-      gameObjects[coord.getX()][coord.getY()].setType(ObjectType.SNAKE, snake.getColor());
+      gameObjectsField[coord.getX()][coord.getY()].setType(ObjectType.SNAKE, snake.getColor());
     }
     newFood();
   }
@@ -113,19 +124,22 @@ class GameLogic {
         }
       }
 
-      if (gameObjects[snake.getSnakeHeadX()][snake.getSnakeHeadY()].getType() == ObjectType.FOOD) {
+      if (gameObjectsField[snake.getSnakeHeadX()][snake.getSnakeHeadY()].getType() == ObjectType.FOOD) {
         for (Fruit fruit : fruits) {
           if (fruit.getX() == snake.getSnakeHeadX() && fruit.getY() == snake.getSnakeHeadY()) {
-            snake.eatFruit(fruit);
+            List<Coord> mustBeRemoved = snake.eatFruit(fruit);
+            for (Coord coord: mustBeRemoved) {
+              gameObjectsField[coord.getX()][coord.getY()].setType();
+            }
             fruits.remove(fruit);
             break;
           }
         }
         newFood();
       }
-      gameObjects[dels.getX()][dels.getY()].setType();
+      gameObjectsField[dels.getX()][dels.getY()].setType();
 
-      gameObjects[snake.getSnakeHeadX()][snake.getSnakeHeadY()].setType(ObjectType.SNAKE, snake.getColor());
+      gameObjectsField[snake.getSnakeHeadX()][snake.getSnakeHeadY()].setType(ObjectType.SNAKE, snake.getColor());
 
     }
   }
