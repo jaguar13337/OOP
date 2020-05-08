@@ -1,12 +1,10 @@
-package ru.nsu.fit.g18214.yakovlev;
+package ru.nsu.fit.g18214.yakovlev.Model;
 
-
-import javafx.scene.paint.Paint;
 
 class Apple extends Fruit {
 
   @Override
-  int getAddedSpeed() {
+  int getSpeedChange() {
     return 0;
   }
 
@@ -16,7 +14,7 @@ class Apple extends Fruit {
   }
 
   @Override
-  int getSizeAdded() {
+  int getSizeChange() {
     return 1;
   }
 
@@ -25,7 +23,7 @@ class Apple extends Fruit {
   }
 
   @Override
-  Paint getColor() {
-    return Paint.valueOf("red");
+  TypeForTextures getGameTypeForTextures() {
+    return TypeForTextures.RED_FRUIT;
   }
 }

@@ -12,7 +12,8 @@ public class Main extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getClassLoader().getResource("field.fxml")));
+    FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().
+      getClassLoader().getResource("viewField.fxml")));
     Parent root = loader.load();
     FieldController controller = loader.getController();
     Scene scene = new Scene(root);

@@ -1,10 +1,10 @@
-package ru.nsu.fit.g18214.yakovlev;
+package ru.nsu.fit.g18214.yakovlev.Model;
 
-class Coord {
+class Coordinate {
   private int x;
   private int y;
 
-  Coord(int x, int y) {
+  Coordinate(int x, int y) {
     this.x = x;
     this.y = y;
   }

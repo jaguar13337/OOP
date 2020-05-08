@@ -7,11 +7,18 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import ru.nsu.fit.g18214.yakovlev.Model.Directions;
+import ru.nsu.fit.g18214.yakovlev.Model.GameLogic;
+import ru.nsu.fit.g18214.yakovlev.Model.State;
+import ru.nsu.fit.g18214.yakovlev.Model.TypeForTextures;
 
 public class FieldController {
   public FieldController() {
   }
+
   private static final String rules = "This is the rule of Snake Game.\n" +
     "You need to score the most points.\nFor that you have to eat fruits.\n" +
     "Controls:\nW or Up -> moving up\nA or Left -> moving left\n" +
@@ -19,14 +26,18 @@ public class FieldController {
     "For reading rules again, press H\nGame Restart -> R\nGame Pause -> SPACE\n" +
     "Good luck!";
 
-  private int CELL_SIZE;
+
+  private int cellSize;
   private AnimationTimer timer;
+  private GameLogic gameLogic;
+  private Rectangle[][] gameField;
+
 
   @FXML
   private HBox box;
 
   @FXML
-  private Pane gameField;
+  private Pane paneGameField;
 
   @FXML
   private Label shortInfo;
@@ -43,26 +54,26 @@ public class FieldController {
         startGame();
         break;
       case H:
-        GameLogic.changeState(State.HELP);
+        gameLogic.changeState(State.HELP);
         break;
       case W:
       case UP:
-        GameLogic.addDir(Directions.UP);
+        gameLogic.addDir(Directions.UP);
         break;
       case S:
       case DOWN:
-        GameLogic.addDir(Directions.DOWN);
+        gameLogic.addDir(Directions.DOWN);
         break;
       case A:
       case LEFT:
-        GameLogic.addDir(Directions.LEFT);
+        gameLogic.addDir(Directions.LEFT);
         break;
       case D:
       case RIGHT:
-        GameLogic.addDir(Directions.RIGHT);
+        gameLogic.addDir(Directions.RIGHT);
         break;
       case SPACE:
-        GameLogic.changeState(State.PAUSE);
+        gameLogic.changeState(State.PAUSE);
         break;
       default:
         break;
@@ -71,7 +82,7 @@ public class FieldController {
   }
 
   private void handleGameState() {
-    switch (GameLogic.getState()) {
+    switch (gameLogic.getState()) {
       case HELP:
         help.setText(rules);
         break;
@@ -89,21 +100,25 @@ public class FieldController {
   }
 
   private void startGame() {
-
+    gameLogic.stop();
     if (timer != null) {
       timer.stop();
     }
 
-    GameLogic.initializeField();
-    gameField.getChildren().clear();
-    for (GameObject[] gameObjects : GameLogic.getGameObjectsField()) {
-      for (GameObject gameObject : gameObjects) {
-        gameObject.setSize(CELL_SIZE);
-        gameField.getChildren().add(gameObject);
+    gameLogic.initializeField();
+    paneGameField.getChildren().clear();
+    gameLogic.gameInit();
+
+    gameField = new Rectangle[gameLogic.getCellCnt()][gameLogic.getCellCnt()];
+
+    for (int i = 0; i < gameLogic.getCellCnt(); i++) {
+      for (int j = 0; j < gameLogic.getCellCnt(); j++) {
+        gameField[i][j] = new Rectangle(i * cellSize, j * cellSize, cellSize, cellSize);
+        gameField[i][j].setFill(typeToPaint(gameLogic.getCellTypeForTextures(i, j)));
+        paneGameField.getChildren().add(gameField[i][j]);
       }
     }
 
-    GameLogic.gameInit();
 
     timer = new AnimationTimer() {
       long tick = 0;
@@ -112,31 +127,60 @@ public class FieldController {
       public void handle(long curr) {
         if (tick == 0) {
           tick = curr;
-          GameLogic.gameTick();
-        } else if (curr - tick > GameLogic.getTimerToTick()) {
+          redrawField();
+        } else if (curr - tick > 32000000) {
           tick = curr;
-          GameLogic.gameTick();
+          redrawField();
         }
         handleGameState();
-        score.setText(GameLogic.getScore().toString());
+        score.setText(gameLogic.getScore().toString());
       }
     };
 
     timer.start();
+    gameLogic.start();
 
   }
 
+  private Paint typeToPaint(TypeForTextures type) {
+    switch (type) {
+      case FIELD:
+        return Paint.valueOf("grey");
+      case RED_FRUIT:
+        return Paint.valueOf("red");
+      case SNAKE_BODY:
+        return Paint.valueOf("brown");
+      case SNAKE_HEAD:
+        return Paint.valueOf("SADDLEBROWN");
+      case SNAKE_TAIL:
+        return Paint.valueOf("goldenrod");
+      case VIOLET_FRUIT:
+        return Paint.valueOf("violet");
+      case YELLOW_FRUIT:
+        return Paint.valueOf("yellow");
+    }
+    assert false;
+    return null;
+  }
+
+  private void redrawField() {
+    for (int i = 0; i < gameLogic.getCellCnt(); i++) {
+      for (int j = 0; j < gameLogic.getCellCnt(); j++) {
+        gameField[i][j].setFill(typeToPaint(gameLogic.getCellTypeForTextures(i, j)));
+      }
+    }
+  }
 
   private void rescaleFieldSize() {
     double scale;
-    if (gameField.getPrefWidth() / gameField.getPrefHeight()
+    if (paneGameField.getPrefWidth() / paneGameField.getPrefHeight()
       > box.getWidth() / box.getHeight()) {
-      scale = box.getWidth() / gameField.getPrefWidth();
+      scale = box.getWidth() / paneGameField.getPrefWidth();
     } else {
-      scale = box.getHeight() / gameField.getPrefHeight();
+      scale = box.getHeight() / paneGameField.getPrefHeight();
     }
-    gameField.setScaleX(scale);
-    gameField.setScaleY(scale);
+    paneGameField.setScaleX(scale);
+    paneGameField.setScaleY(scale);
     shortInfo.setScaleX(scale);
     shortInfo.setScaleY(scale);
     score.setFont(new Font("", 20 * scale));
@@ -145,11 +189,12 @@ public class FieldController {
 
 
   public void initialize() {
-    CELL_SIZE = (int) gameField.getPrefWidth() / GameLogic.getCellCnt();
+    gameLogic = new GameLogic();
+    cellSize = (int) paneGameField.getPrefWidth() / gameLogic.getCellCnt();
     ChangeListener<Number> listener = ((observable, oldValue, newValue) -> rescaleFieldSize());
     box.widthProperty().addListener(listener);
     box.heightProperty().addListener(listener);
-    GameLogic.changeState(State.HELP);
+    gameLogic.changeState(State.HELP);
     handleGameState();
   }
 }

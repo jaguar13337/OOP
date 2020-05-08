@@ -1,4 +1,4 @@
-package ru.nsu.fit.g18214.yakovlev;
+package ru.nsu.fit.g18214.yakovlev.Model;
 
 public enum ObjectType {
   FOOD,

@@ -1,17 +1,16 @@
-package ru.nsu.fit.g18214.yakovlev;
+package ru.nsu.fit.g18214.yakovlev.Model;
 
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
-import javafx.scene.paint.Paint;
 
 class Snake {
-  private List<Coord> snakeBody;
-  private int score = 0;
-  private int speed = 5;
-  private int len = 1;
+  private Deque<Coordinate> snakeBody;
+  private int score;
+  private int speed;
   private static Directions direction;
   private static Directions prevDir;
-  private List<Coord> mustBeRemoved;
 
   void setDirection(Directions dir) {
     prevDir = direction;
@@ -19,12 +18,11 @@ class Snake {
   }
 
   Snake(int currX, int currY) {
-    snakeBody = new ArrayList<>();
-    for (int i = 0; i < len; i++) {
-      addBody(currX, currY);
-    }
+    score = 0;
+    speed = 5;
+    snakeBody = new LinkedList<>();
+    addBody(currX, currY);
     direction = Directions.UP;
-    mustBeRemoved = new ArrayList<>();
   }
 
   int getScore() {
@@ -35,28 +33,23 @@ class Snake {
     return speed;
   }
 
-  public int getLen() {
-    return len;
-  }
 
-  List<Coord> eatFruit(Fruit fruit) {
-    mustBeRemoved.clear();
-    if (speed + fruit.getAddedSpeed() >= 1) {
-      speed += fruit.getAddedSpeed();
+  List<Coordinate> eatFruit(Fruit fruit) {
+    List<Coordinate> mustBeRemoved = new ArrayList<>();
+    if (speed + fruit.getSpeedChange() >= 3) {
+      speed += fruit.getSpeedChange();
     } else {
-      speed = 1;
+      speed = 3;
     }
-    if (fruit.getSizeAdded() < 0) {
-      for (int i = 0; i < -fruit.getSizeAdded(); i++) {
-        if (len == 1) {
+    if (fruit.getSizeChange() < 0) {
+      for (int i = 0; i < -fruit.getSizeChange(); i++) {
+        if (snakeBody.size() == 1) {
           break;
         }
-        mustBeRemoved.add(snakeBody.remove(snakeBody.size() - 1));
-        len--;
+        mustBeRemoved.add(snakeBody.removeLast());
       }
     } else {
-      len += fruit.getSizeAdded();
-      for (int i = 0; i < fruit.getSizeAdded(); i++) {
+      for (int i = 0; i < fruit.getSizeChange(); i++) {
         addBody(getSnakeHeadX(), getSnakeHeadY());
       }
     }
@@ -64,7 +57,7 @@ class Snake {
     return mustBeRemoved;
   }
 
-  Coord move() {
+  Coordinate move() {
     switch (direction) {
       case UP:
         if (prevDir != Directions.DOWN) {
@@ -99,40 +92,36 @@ class Snake {
         }
         break;
     }
-    return snakeBody.remove(snakeBody.size() - 1);
+    return snakeBody.removeLast();
   }
 
   private void addBody(int currX, int currY) {
-    Coord coord = new Coord(currX, currY);
+    Coordinate coordinate = new Coordinate(currX, currY);
     if (snakeBody.size() > 0 && (currX == getSnakeHeadX() || currY == getSnakeHeadY())) {
-      snakeBody.add(0, coord);
+      snakeBody.addFirst(coordinate);
     } else {
-      snakeBody.add(coord);
+      snakeBody.addLast(coordinate);
     }
   }
 
   int getSnakeHeadX() {
-    return snakeBody.get(0).getX();
+    return snakeBody.getFirst().getX();
   }
 
   int getSnakeHeadY() {
-    return snakeBody.get(0).getY();
+    return snakeBody.getFirst().getY();
   }
 
-  int getSnakeBodyX(int i) {
-    return snakeBody.get(i).getX();
+  int getSnakeTailX() {
+    return snakeBody.getLast().getX();
   }
 
-  int getSnakeBodyY(int i) {
-    return snakeBody.get(i).getY();
+  int getSnakeTailY() {
+    return snakeBody.getLast().getY();
   }
 
-  List<Coord> getSnakeBody() {
+
+  Deque<Coordinate> getSnakeBody() {
     return snakeBody;
   }
-
-  Paint getColor() {
-    return Paint.valueOf("saddlebrown");
-  }
-
 }

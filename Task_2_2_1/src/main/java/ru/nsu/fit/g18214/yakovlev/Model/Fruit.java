@@ -1,9 +1,7 @@
-package ru.nsu.fit.g18214.yakovlev;
+package ru.nsu.fit.g18214.yakovlev.Model;
 
 
-import javafx.scene.paint.Paint;
-
-abstract class Fruit{
+abstract class Fruit {
 
   private int x;
   private int y;
@@ -21,8 +19,11 @@ abstract class Fruit{
     this.y = y;
   }
 
-  abstract Paint getColor();
-  abstract int getAddedSpeed();
+  abstract int getSpeedChange();
+
   abstract int getScoreCount();
-  abstract int getSizeAdded();
+
+  abstract int getSizeChange();
+
+  abstract TypeForTextures getGameTypeForTextures();
 }

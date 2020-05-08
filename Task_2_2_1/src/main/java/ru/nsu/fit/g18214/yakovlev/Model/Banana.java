@@ -1,6 +1,4 @@
-package ru.nsu.fit.g18214.yakovlev;
-
-import javafx.scene.paint.Paint;
+package ru.nsu.fit.g18214.yakovlev.Model;
 
 class Banana extends Fruit {
 
@@ -9,12 +7,12 @@ class Banana extends Fruit {
   }
 
   @Override
-  Paint getColor() {
-    return Paint.valueOf("yellow");
+  TypeForTextures getGameTypeForTextures() {
+    return TypeForTextures.YELLOW_FRUIT;
   }
 
   @Override
-  int getAddedSpeed() {
+  int getSpeedChange() {
     return -1;
   }
 
@@ -24,7 +22,7 @@ class Banana extends Fruit {
   }
 
   @Override
-  int getSizeAdded() {
+  int getSizeChange() {
     return -1;
   }
 }

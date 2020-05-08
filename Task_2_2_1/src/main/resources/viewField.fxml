@@ -30,7 +30,7 @@
                         </Label>
                         <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="380.0" prefWidth="504.0" style="-fx-background-color: lightgreen;" HBox.hgrow="ALWAYS">
                            <children>
-                              <Pane fx:id="gameField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" style="-fx-background-color: gray;" StackPane.alignment="CENTER" />
+                              <Pane fx:id="paneGameField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" style="-fx-background-color: gray;" StackPane.alignment="CENTER" />
                               <Label fx:id="shortInfo" textFill="RED">
                                  <font>
                                     <Font size="20.0" />
