@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+
+/**
+ * This is the main Model class, which is responsible for the whole game state and its logic.
+ */
 public class GameLogic {
 
 
   private final int CELL_CNT = 25;
-  private final int TIME_TO_TICK = 1000000000;
   private final int FRUIT_COUNT = 4;
 
   private Random random = new Random();
@@ -20,28 +23,56 @@ public class GameLogic {
   private Thread thread;
 
 
+  /**
+   * Returns type of gameField cell with given coordinates,
+   * which should be used for coloring this cell in the controller.
+   *
+   * @param x first coordinate
+   * @param y second coordinate
+   * @return Type, which is used for coloring it in the controller.
+   */
   public TypeForTextures getCellTypeForTextures(int x, int y) {
     return gameField.getTypeForTextures(x, y);
   }
 
+  /**
+   * Added direction after the users input to the directions queue.
+   * @param dir given direction.
+   */
   public void addDir(Directions dir) {
     if (dirsQueue.size() == 0 || dirsQueue.get(dirsQueue.size() - 1) != dir) {
       dirsQueue.add(dir);
     }
   }
 
+  /**
+   * Returns count of cells on the field. Use for the cell size counting.
+   * @return count of cells.
+   */
   public int getCellCnt() {
     return CELL_CNT;
   }
 
+  /**
+   * Returns current game state for the controller. Used for the showing some additional labels.
+   * @return current game state.
+   */
   public State getState() {
     return gameState;
   }
 
+  /**
+   * Returns current players game score. Used in controller for showing it to the user.
+   * @return
+   */
   public Integer getScore() {
     return snake.getScore();
   }
 
+  /**
+   * Change the current game state.
+   * @param newState new game state.
+   */
   public void changeState(State newState) {
     if (gameState.equals(newState)) {
       gameState = State.NOTHING;
@@ -50,10 +81,9 @@ public class GameLogic {
     }
   }
 
-  public int getTimeToTick() {
-    return TIME_TO_TICK / snake.getSpeed();
-  }
-
+  /**
+   * Creates new empty field.
+   */
   public void initializeField() {
     gameField = new GameField(CELL_CNT);
     gameField.initializeField();
@@ -87,6 +117,9 @@ public class GameLogic {
     }
   }
 
+  /**
+   * Starts new game. Creates main objects such as snake, food and empty directions queue.
+   */
   public void gameInit() {
     snake = new Snake(CELL_CNT / 2, CELL_CNT / 2);
     fruits = new ArrayList<>();
@@ -108,7 +141,7 @@ public class GameLogic {
       ObjectType.SNAKE, TypeForTextures.SNAKE_HEAD);
   }
 
-  public void gameTick() {
+  private void gameTick() {
     while (!Thread.interrupted()) {
       if (gameState == State.NOTHING) {
         if (dirsQueue.size() > 0) {
@@ -156,10 +189,16 @@ public class GameLogic {
     }
   }
 
+  /**
+   * Starts game main tick in the dedicated thread.
+   */
   public void start() {
     thread.start();
   }
 
+  /**
+   * Stops current game by interrupting it.
+   */
   public void stop() {
     if (thread != null) {
       thread.interrupt();
