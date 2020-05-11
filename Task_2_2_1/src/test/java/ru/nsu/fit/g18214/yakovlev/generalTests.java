@@ -1,11 +1,12 @@
-import java.security.PublicKey;
+package ru.nsu.fit.g18214.yakovlev;
+
 import org.junit.Assert;
 import org.junit.Test;
 import ru.nsu.fit.g18214.yakovlev.Model.GameLogic;
 import ru.nsu.fit.g18214.yakovlev.Model.State;
 import ru.nsu.fit.g18214.yakovlev.Model.TypeForTextures;
 
-public class Tests {
+public class generalTests {
   @Test
   public void fieldInitializeTest() {
     GameLogic logic = new GameLogic();
@@ -14,7 +15,7 @@ public class Tests {
 
     for (int i = 0; i < logic.getCellCnt(); i++) {
       for (int j = 0; j < logic.getCellCnt(); j++) {
-        Assert.assertEquals(logic.getCellTypeForTextures(i,j), TypeForTextures.FIELD);
+        Assert.assertEquals(logic.getCellTypeForTextures(i, j), TypeForTextures.FIELD);
       }
     }
   }
@@ -26,7 +27,7 @@ public class Tests {
     logic.initializeField();
     logic.gameInit();
 
-    Assert.assertEquals((int)logic.getScore(), 0);
+    Assert.assertEquals((int) logic.getScore(), 0);
     Assert.assertEquals(logic.getState(), State.NOTHING);
   }
 
