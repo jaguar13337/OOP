@@ -85,12 +85,15 @@ public class FieldController {
     switch (gameLogic.getState()) {
       case HELP:
         help.setText(rules);
+        shortInfo.setText("");
         break;
       case PAUSE:
         shortInfo.setText("PAUSE");
+        help.setText("");
         break;
       case GAMEOVER:
         shortInfo.setText("GAME OVER");
+        help.setText("");
         break;
       case NOTHING:
         shortInfo.setText("");

@@ -18,6 +18,7 @@ public class GameLogic {
   private Snake snake;
   private List<Fruit> fruits;
   private State gameState = State.NOTHING;
+  private boolean gameOver;
   private List<Directions> dirsQueue;
   private GameField gameField;
   private Thread thread;
@@ -63,7 +64,7 @@ public class GameLogic {
 
   /**
    * Returns current players game score. Used in controller for showing it to the user.
-   * @return
+   * @return game score.
    */
   public Integer getScore() {
     return snake.getScore();
@@ -74,10 +75,16 @@ public class GameLogic {
    * @param newState new game state.
    */
   public void changeState(State newState) {
-    if (gameState.equals(newState)) {
-      gameState = State.NOTHING;
-    } else {
+    if (gameState.equals(newState)){
+      if (gameOver) {
+        gameState = State.GAMEOVER;
+      } else {
+        gameState = State.NOTHING;
+      }
+    }
+    else {
       gameState = newState;
+
     }
   }
 
@@ -125,6 +132,7 @@ public class GameLogic {
     fruits = new ArrayList<>();
     dirsQueue = new ArrayList<>();
     gameState = State.NOTHING;
+    gameOver = false;
     setSnake();
     newFood();
     thread = new Thread(this::gameTick);
@@ -153,6 +161,7 @@ public class GameLogic {
         if (snake.getSnakeHeadY() < 0 || snake.getSnakeHeadX() < 0 ||
           snake.getSnakeHeadX() >= CELL_CNT || snake.getSnakeHeadY() >= CELL_CNT) {
           gameState = State.GAMEOVER;
+          gameOver = true;
           return;
         }
 
@@ -161,6 +170,8 @@ public class GameLogic {
           if (check && snake.getSnakeHeadX() == coordinate.getX() &&
             snake.getSnakeHeadY() == coordinate.getY()) {
             gameState = State.GAMEOVER;
+            gameOver = true;
+            return;
           }
           check = true;
         }
