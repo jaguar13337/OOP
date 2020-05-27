@@ -1,5 +1,7 @@
 package ru.nsu.fit.g18214.yakovlev.Model;
 
+import ru.nsu.fit.g18214.yakovlev.TextureType;
+
 class Cranberry extends Fruit {
 
   Cranberry(int x, int y) {
@@ -7,8 +9,8 @@ class Cranberry extends Fruit {
   }
 
   @Override
-  TypeForTextures getGameTypeForTextures() {
-    return TypeForTextures.VIOLET_FRUIT;
+  TextureType getGameTypeForTextures() {
+    return TextureType.VIOLET_FRUIT;
   }
 
   @Override

@@ -1,6 +1,8 @@
 package ru.nsu.fit.g18214.yakovlev.Model;
 
 
+import ru.nsu.fit.g18214.yakovlev.TextureType;
+
 abstract class Fruit {
 
   private int x;
@@ -25,5 +27,5 @@ abstract class Fruit {
 
   abstract int getSizeChange();
 
-  abstract TypeForTextures getGameTypeForTextures();
+  abstract TextureType getGameTypeForTextures();
 }

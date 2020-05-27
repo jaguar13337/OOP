@@ -1,8 +1,11 @@
 package ru.nsu.fit.g18214.yakovlev.Model;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Random;
+import ru.nsu.fit.g18214.yakovlev.TextureType;
 
 
 /**
@@ -17,9 +20,9 @@ public class GameLogic {
   private Random random = new Random();
   private Snake snake;
   private List<Fruit> fruits;
-  private State gameState = State.NOTHING;
+  private State gameState = State.DEFAULT;
   private boolean gameOver;
-  private List<Directions> dirsQueue;
+  private Deque<Directions> dirsQueue;
   private GameField gameField;
   private Thread thread;
 
@@ -32,7 +35,7 @@ public class GameLogic {
    * @param y second coordinate
    * @return Type, which is used for coloring it in the controller.
    */
-  public TypeForTextures getCellTypeForTextures(int x, int y) {
+  public TextureType getCellTextureType(int x, int y) {
     return gameField.getTypeForTextures(x, y);
   }
 
@@ -41,7 +44,7 @@ public class GameLogic {
    * @param dir given direction.
    */
   public void addDir(Directions dir) {
-    if (dirsQueue.size() == 0 || dirsQueue.get(dirsQueue.size() - 1) != dir) {
+    if (dirsQueue.size() == 0 || dirsQueue.peekLast() != dir) {
       dirsQueue.add(dir);
     }
   }
@@ -79,7 +82,7 @@ public class GameLogic {
       if (gameOver) {
         gameState = State.GAMEOVER;
       } else {
-        gameState = State.NOTHING;
+        gameState = State.DEFAULT;
       }
     }
     else {
@@ -96,7 +99,7 @@ public class GameLogic {
     gameField.initializeField();
   }
 
-  private void newFood() {
+  private void spawnFood() {
     for (int i = fruits.size(); i < FRUIT_COUNT; i++) {
       while (true) {
         int x = random.nextInt(CELL_CNT);
@@ -130,30 +133,30 @@ public class GameLogic {
   public void gameInit() {
     snake = new Snake(CELL_CNT / 2, CELL_CNT / 2);
     fruits = new ArrayList<>();
-    dirsQueue = new ArrayList<>();
-    gameState = State.NOTHING;
+    dirsQueue = new ArrayDeque<>();
+    gameState = State.DEFAULT;
     gameOver = false;
     setSnake();
-    newFood();
+    spawnFood();
     thread = new Thread(this::gameTick);
   }
 
   private void setSnake() {
     for (Coordinate coordinate : snake.getSnakeBody()) {
       gameField.setCellType(coordinate.getX(), coordinate.getY(),
-        ObjectType.SNAKE, TypeForTextures.SNAKE_BODY);
+        ObjectType.SNAKE, TextureType.SNAKE_BODY);
     }
     gameField.setCellType(snake.getSnakeTailX(), snake.getSnakeTailY(),
-      ObjectType.SNAKE, TypeForTextures.SNAKE_TAIL);
+      ObjectType.SNAKE, TextureType.SNAKE_TAIL);
     gameField.setCellType(snake.getSnakeHeadX(), snake.getSnakeHeadY(),
-      ObjectType.SNAKE, TypeForTextures.SNAKE_HEAD);
+      ObjectType.SNAKE, TextureType.SNAKE_HEAD);
   }
 
   private void gameTick() {
     while (!Thread.interrupted()) {
-      if (gameState == State.NOTHING) {
+      if (gameState == State.DEFAULT) {
         if (dirsQueue.size() > 0) {
-          snake.setDirection(dirsQueue.remove(0));
+          snake.setDirection(dirsQueue.removeFirst());
         }
 
         Coordinate dels = snake.move();
@@ -187,7 +190,7 @@ public class GameLogic {
               break;
             }
           }
-          newFood();
+          spawnFood();
         }
         gameField.makeCellEmpty(dels.getX(), dels.getY());
         setSnake();

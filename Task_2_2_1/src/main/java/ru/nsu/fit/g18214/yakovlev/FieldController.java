@@ -13,7 +13,6 @@ import javafx.scene.text.Font;
 import ru.nsu.fit.g18214.yakovlev.Model.Directions;
 import ru.nsu.fit.g18214.yakovlev.Model.GameLogic;
 import ru.nsu.fit.g18214.yakovlev.Model.State;
-import ru.nsu.fit.g18214.yakovlev.Model.TypeForTextures;
 
 public class FieldController {
   public FieldController() {
@@ -27,6 +26,7 @@ public class FieldController {
     "Good luck!";
 
 
+  private final int timeToTick = 32000000;
   private int cellSize;
   private AnimationTimer timer;
   private GameLogic gameLogic;
@@ -95,7 +95,7 @@ public class FieldController {
         shortInfo.setText("GAME OVER");
         help.setText("");
         break;
-      case NOTHING:
+      case DEFAULT:
         shortInfo.setText("");
         help.setText("");
         break;
@@ -117,7 +117,7 @@ public class FieldController {
     for (int i = 0; i < gameLogic.getCellCnt(); i++) {
       for (int j = 0; j < gameLogic.getCellCnt(); j++) {
         gameField[i][j] = new Rectangle(i * cellSize, j * cellSize, cellSize, cellSize);
-        gameField[i][j].setFill(typeToPaint(gameLogic.getCellTypeForTextures(i, j)));
+        gameField[i][j].setFill(typeToPaint(gameLogic.getCellTextureType(i, j)));
         paneGameField.getChildren().add(gameField[i][j]);
       }
     }
@@ -131,7 +131,7 @@ public class FieldController {
         if (tick == 0) {
           tick = curr;
           redrawField();
-        } else if (curr - tick > 32000000) {
+        } else if (curr - tick > timeToTick) {
           tick = curr;
           redrawField();
         }
@@ -145,7 +145,7 @@ public class FieldController {
 
   }
 
-  private Paint typeToPaint(TypeForTextures type) {
+  private Paint typeToPaint(TextureType type) {
     switch (type) {
       case FIELD:
         return Paint.valueOf("grey");
@@ -169,7 +169,7 @@ public class FieldController {
   private void redrawField() {
     for (int i = 0; i < gameLogic.getCellCnt(); i++) {
       for (int j = 0; j < gameLogic.getCellCnt(); j++) {
-        gameField[i][j].setFill(typeToPaint(gameLogic.getCellTypeForTextures(i, j)));
+        gameField[i][j].setFill(typeToPaint(gameLogic.getCellTextureType(i, j)));
       }
     }
   }

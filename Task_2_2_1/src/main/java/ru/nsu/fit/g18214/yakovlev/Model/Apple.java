@@ -1,7 +1,13 @@
 package ru.nsu.fit.g18214.yakovlev.Model;
 
 
+import ru.nsu.fit.g18214.yakovlev.TextureType;
+
 class Apple extends Fruit {
+
+  Apple(int x, int y) {
+    super(x, y);
+  }
 
   @Override
   int getSpeedChange() {
@@ -18,12 +24,8 @@ class Apple extends Fruit {
     return 1;
   }
 
-  Apple(int x, int y) {
-    super(x, y);
-  }
-
   @Override
-  TypeForTextures getGameTypeForTextures() {
-    return TypeForTextures.RED_FRUIT;
+  TextureType getGameTypeForTextures() {
+    return TextureType.RED_FRUIT;
   }
 }

@@ -1,30 +1,32 @@
 package ru.nsu.fit.g18214.yakovlev.Model;
 
+import ru.nsu.fit.g18214.yakovlev.TextureType;
+
 class GameObject{
   private ObjectType type;
-  private TypeForTextures typeForTextures;
+  private TextureType textureType;
 
   GameObject() {
     this.type = ObjectType.EMPTY;
-    this.typeForTextures = TypeForTextures.FIELD;
+    this.textureType = TextureType.FIELD;
   }
 
-  void setType(ObjectType type, TypeForTextures typeForTextures) {
+  void setType(ObjectType type, TextureType textureType) {
     this.type = type;
-    this.typeForTextures = typeForTextures;
+    this.textureType = textureType;
   }
 
   void setEmptyType() {
     this.type = ObjectType.EMPTY;
-    this.typeForTextures = TypeForTextures.FIELD;
+    this.textureType = TextureType.FIELD;
   }
 
   ObjectType getType() {
     return type;
   }
 
-  TypeForTextures getTypeForTextures() {
-    return typeForTextures;
+  TextureType getTextureType() {
+    return textureType;
   }
 }
 
