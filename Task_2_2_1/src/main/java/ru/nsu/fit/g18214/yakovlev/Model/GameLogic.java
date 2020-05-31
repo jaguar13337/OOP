@@ -1,10 +1,11 @@
 package ru.nsu.fit.g18214.yakovlev.Model;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import ru.nsu.fit.g18214.yakovlev.FieldController;
 import ru.nsu.fit.g18214.yakovlev.TextureType;
 
 
@@ -13,19 +14,21 @@ import ru.nsu.fit.g18214.yakovlev.TextureType;
  */
 public class GameLogic {
 
-
   private final int CELL_CNT = 25;
   private final int FRUIT_COUNT = 4;
-
   private Random random = new Random();
   private Snake snake;
-  private List<Fruit> fruits;
+  private ConcurrentLinkedQueue<Fruit> fruits;
   private State gameState = State.DEFAULT;
   private boolean gameOver;
   private Deque<Directions> dirsQueue;
   private GameField gameField;
   private Thread thread;
+  private FieldController controller;
 
+  public GameLogic(FieldController controller) {
+    this.controller = controller;
+  }
 
   /**
    * Returns type of gameField cell with given coordinates,
@@ -41,6 +44,7 @@ public class GameLogic {
 
   /**
    * Added direction after the users input to the directions queue.
+   *
    * @param dir given direction.
    */
   public void addDir(Directions dir) {
@@ -51,6 +55,7 @@ public class GameLogic {
 
   /**
    * Returns count of cells on the field. Use for the cell size counting.
+   *
    * @return count of cells.
    */
   public int getCellCnt() {
@@ -59,6 +64,7 @@ public class GameLogic {
 
   /**
    * Returns current game state for the controller. Used for the showing some additional labels.
+   *
    * @return current game state.
    */
   public State getState() {
@@ -67,6 +73,7 @@ public class GameLogic {
 
   /**
    * Returns current players game score. Used in controller for showing it to the user.
+   *
    * @return game score.
    */
   public Integer getScore() {
@@ -75,20 +82,25 @@ public class GameLogic {
 
   /**
    * Change the current game state.
+   *
    * @param newState new game state.
    */
   public void changeState(State newState) {
-    if (gameState.equals(newState)){
+    if (gameState.equals(newState)) {
       if (gameOver) {
+        stop();
         gameState = State.GAMEOVER;
       } else {
+        start();
         gameState = State.DEFAULT;
       }
-    }
-    else {
+    } else {
+      stop();
       gameState = newState;
-
     }
+    System.out.println(gameState);
+    controller.handleGameState();
+
   }
 
   /**
@@ -132,13 +144,12 @@ public class GameLogic {
    */
   public void gameInit() {
     snake = new Snake(CELL_CNT / 2, CELL_CNT / 2);
-    fruits = new ArrayList<>();
+    fruits = new ConcurrentLinkedQueue<>();
     dirsQueue = new ArrayDeque<>();
-    gameState = State.DEFAULT;
+    changeState(State.DEFAULT);
     gameOver = false;
     setSnake();
     spawnFood();
-    thread = new Thread(this::gameTick);
   }
 
   private void setSnake() {
@@ -163,8 +174,9 @@ public class GameLogic {
 
         if (snake.getSnakeHeadY() < 0 || snake.getSnakeHeadX() < 0 ||
           snake.getSnakeHeadX() >= CELL_CNT || snake.getSnakeHeadY() >= CELL_CNT) {
-          gameState = State.GAMEOVER;
+          changeState(State.GAMEOVER);
           gameOver = true;
+          controller.redrawField();
           return;
         }
 
@@ -172,7 +184,8 @@ public class GameLogic {
         for (Coordinate coordinate : snake.getSnakeBody()) {
           if (check && snake.getSnakeHeadX() == coordinate.getX() &&
             snake.getSnakeHeadY() == coordinate.getY()) {
-            gameState = State.GAMEOVER;
+            changeState(State.GAMEOVER);
+            controller.redrawField();
             gameOver = true;
             return;
           }
@@ -194,12 +207,15 @@ public class GameLogic {
         }
         gameField.makeCellEmpty(dels.getX(), dels.getY());
         setSnake();
+
+        controller.redrawField();
         try {
           Thread.sleep(250 - snake.getSpeed() * 10);
         } catch (InterruptedException e) {
           return;
         }
       }
+
     }
   }
 
@@ -207,6 +223,7 @@ public class GameLogic {
    * Starts game main tick in the dedicated thread.
    */
   public void start() {
+    thread = new Thread(this::gameTick);
     thread.start();
   }
 

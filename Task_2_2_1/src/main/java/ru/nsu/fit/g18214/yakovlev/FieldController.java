@@ -1,6 +1,6 @@
 package ru.nsu.fit.g18214.yakovlev;
 
-import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -15,38 +15,29 @@ import ru.nsu.fit.g18214.yakovlev.Model.GameLogic;
 import ru.nsu.fit.g18214.yakovlev.Model.State;
 
 public class FieldController {
-  public FieldController() {
-  }
-
   private static final String rules = "This is the rule of Snake Game.\n" +
     "You need to score the most points.\nFor that you have to eat fruits.\n" +
     "Controls:\nW or Up -> moving up\nA or Left -> moving left\n" +
     "D or Right -> moving right\nS or Down -> moving down\n" +
     "For reading rules again, press H\nGame Restart -> R\nGame Pause -> SPACE\n" +
     "Good luck!";
-
-
-  private final int timeToTick = 32000000;
   private int cellSize;
-  private AnimationTimer timer;
   private GameLogic gameLogic;
   private Rectangle[][] gameField;
-
-
   @FXML
   private HBox box;
-
   @FXML
   private Pane paneGameField;
-
   @FXML
   private Label shortInfo;
-
   @FXML
   private Label help;
-
   @FXML
   private Label score;
+
+
+  public FieldController() {
+  }
 
   public void keyHandler(KeyEvent event) {
     switch (event.getCode()) {
@@ -81,32 +72,34 @@ public class FieldController {
     event.consume();
   }
 
-  private void handleGameState() {
-    switch (gameLogic.getState()) {
-      case HELP:
-        help.setText(rules);
-        shortInfo.setText("");
-        break;
-      case PAUSE:
-        shortInfo.setText("PAUSE");
-        help.setText("");
-        break;
-      case GAMEOVER:
-        shortInfo.setText("GAME OVER");
-        help.setText("");
-        break;
-      case DEFAULT:
-        shortInfo.setText("");
-        help.setText("");
-        break;
-    }
+  /**
+   * Allows model to call update of info fields.
+   */
+  public void handleGameState() {
+    Platform.runLater(() -> {
+      switch (gameLogic.getState()) {
+        case HELP:
+          help.setText(rules);
+          shortInfo.setText("");
+          break;
+        case PAUSE:
+          shortInfo.setText("PAUSE");
+          help.setText("");
+          break;
+        case GAMEOVER:
+          shortInfo.setText("GAME OVER");
+          help.setText("");
+          break;
+        case DEFAULT:
+          shortInfo.setText("");
+          help.setText("");
+          break;
+      }
+    });
   }
 
   private void startGame() {
     gameLogic.stop();
-    if (timer != null) {
-      timer.stop();
-    }
 
     gameLogic.initializeField();
     paneGameField.getChildren().clear();
@@ -122,25 +115,6 @@ public class FieldController {
       }
     }
 
-
-    timer = new AnimationTimer() {
-      long tick = 0;
-
-      @Override
-      public void handle(long curr) {
-        if (tick == 0) {
-          tick = curr;
-          redrawField();
-        } else if (curr - tick > timeToTick) {
-          tick = curr;
-          redrawField();
-        }
-        handleGameState();
-        score.setText(gameLogic.getScore().toString());
-      }
-    };
-
-    timer.start();
     gameLogic.start();
 
   }
@@ -166,12 +140,26 @@ public class FieldController {
     return null;
   }
 
-  private void redrawField() {
+  /**
+   * Redraws game field using current game logic state.
+   */
+  public void redrawField() {
+    Paint[][] types = new Paint[gameLogic.getCellCnt()][gameLogic.getCellCnt()];
     for (int i = 0; i < gameLogic.getCellCnt(); i++) {
       for (int j = 0; j < gameLogic.getCellCnt(); j++) {
-        gameField[i][j].setFill(typeToPaint(gameLogic.getCellTextureType(i, j)));
+        types[i][j] = typeToPaint(gameLogic.getCellTextureType(i, j));
       }
     }
+    String scoreNum = gameLogic.getScore().toString();
+    Platform.runLater(() -> {
+      score.setText(scoreNum);
+      for (int i = 0; i < gameLogic.getCellCnt(); i++) {
+        for (int j = 0; j < gameLogic.getCellCnt(); j++) {
+          gameField[i][j].setFill(types[i][j]);
+        }
+      }
+
+    });
   }
 
   private void rescaleFieldSize() {
@@ -192,7 +180,7 @@ public class FieldController {
 
 
   public void initialize() {
-    gameLogic = new GameLogic();
+    gameLogic = new GameLogic(this);
     cellSize = (int) paneGameField.getPrefWidth() / gameLogic.getCellCnt();
     ChangeListener<Number> listener = ((observable, oldValue, newValue) -> rescaleFieldSize());
     box.widthProperty().addListener(listener);
