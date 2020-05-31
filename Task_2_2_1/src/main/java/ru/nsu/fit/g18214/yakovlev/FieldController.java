@@ -76,8 +76,9 @@ public class FieldController {
    * Allows model to call update of info fields.
    */
   public void handleGameState() {
+    State currentState = gameLogic.getState();
     Platform.runLater(() -> {
-      switch (gameLogic.getState()) {
+      switch (currentState) {
         case HELP:
           help.setText(rules);
           shortInfo.setText("");
