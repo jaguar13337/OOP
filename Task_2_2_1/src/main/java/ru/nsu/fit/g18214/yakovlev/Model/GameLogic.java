@@ -91,11 +91,10 @@ public class GameLogic {
         stop();
         gameState = State.GAMEOVER;
       } else {
-        start();
+        inGameRun();
         gameState = State.DEFAULT;
       }
     } else {
-      stop();
       gameState = newState;
     }
     controller.handleGameState();
@@ -214,7 +213,15 @@ public class GameLogic {
           return;
         }
       }
-
+      else {
+        synchronized (lock) {
+          try {
+            lock.wait();
+          } catch (InterruptedException e) {
+            assert false;
+          }
+        }
+      }
     }
   }
 
@@ -236,6 +243,17 @@ public class GameLogic {
         thread.join();
       } catch (InterruptedException e) {
         assert false;
+      }
+    }
+  }
+
+  private final Object lock = new Object();
+
+
+  private void inGameRun() {
+    if (thread != null) {
+      synchronized (lock) {
+        lock.notify();
       }
     }
   }
