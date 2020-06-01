@@ -98,7 +98,6 @@ public class GameLogic {
       stop();
       gameState = newState;
     }
-    System.out.println(gameState);
     controller.handleGameState();
 
   }

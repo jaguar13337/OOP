@@ -77,26 +77,28 @@ public class FieldController {
    */
   public void handleGameState() {
     State currentState = gameLogic.getState();
-    Platform.runLater(() -> {
-      switch (currentState) {
-        case HELP:
-          help.setText(rules);
-          shortInfo.setText("");
-          break;
-        case PAUSE:
-          shortInfo.setText("PAUSE");
-          help.setText("");
-          break;
-        case GAMEOVER:
-          shortInfo.setText("GAME OVER");
-          help.setText("");
-          break;
-        case DEFAULT:
-          shortInfo.setText("");
-          help.setText("");
-          break;
-      }
-    });
+    if (paneGameField != null && box != null) {
+      Platform.runLater(() -> {
+        switch (currentState) {
+          case HELP:
+            help.setText(rules);
+            shortInfo.setText("");
+            break;
+          case PAUSE:
+            shortInfo.setText("PAUSE");
+            help.setText("");
+            break;
+          case GAMEOVER:
+            shortInfo.setText("GAME OVER");
+            help.setText("");
+            break;
+          case DEFAULT:
+            shortInfo.setText("");
+            help.setText("");
+            break;
+        }
+      });
+    }
   }
 
   private void startGame() {
@@ -145,22 +147,24 @@ public class FieldController {
    * Redraws game field using current game logic state.
    */
   public void redrawField() {
-    Paint[][] types = new Paint[gameLogic.getCellCnt()][gameLogic.getCellCnt()];
-    for (int i = 0; i < gameLogic.getCellCnt(); i++) {
-      for (int j = 0; j < gameLogic.getCellCnt(); j++) {
-        types[i][j] = typeToPaint(gameLogic.getCellTextureType(i, j));
-      }
-    }
-    String scoreNum = gameLogic.getScore().toString();
-    Platform.runLater(() -> {
-      score.setText(scoreNum);
+    if (paneGameField != null && box != null) {
+      Paint[][] types = new Paint[gameLogic.getCellCnt()][gameLogic.getCellCnt()];
       for (int i = 0; i < gameLogic.getCellCnt(); i++) {
         for (int j = 0; j < gameLogic.getCellCnt(); j++) {
-          gameField[i][j].setFill(types[i][j]);
+          types[i][j] = typeToPaint(gameLogic.getCellTextureType(i, j));
         }
       }
+      String scoreNum = gameLogic.getScore().toString();
+      Platform.runLater(() -> {
+        score.setText(scoreNum);
+        for (int i = 0; i < gameLogic.getCellCnt(); i++) {
+          for (int j = 0; j < gameLogic.getCellCnt(); j++) {
+            gameField[i][j].setFill(types[i][j]);
+          }
+        }
 
-    });
+      });
+    }
   }
 
   private void rescaleFieldSize() {
@@ -182,10 +186,15 @@ public class FieldController {
 
   public void initialize() {
     gameLogic = new GameLogic(this);
-    cellSize = (int) paneGameField.getPrefWidth() / gameLogic.getCellCnt();
-    ChangeListener<Number> listener = ((observable, oldValue, newValue) -> rescaleFieldSize());
-    box.widthProperty().addListener(listener);
-    box.heightProperty().addListener(listener);
+    if (paneGameField != null && box != null) {
+      cellSize = (int) paneGameField.getPrefWidth() / gameLogic.getCellCnt();
+      ChangeListener<Number> listener = ((observable, oldValue, newValue) -> rescaleFieldSize());
+      box.widthProperty().addListener(listener);
+      box.heightProperty().addListener(listener);
+    } else {
+      cellSize = 100;
+    }
+    ;
     gameLogic.changeState(State.HELP);
     handleGameState();
   }

@@ -8,20 +8,22 @@ import ru.nsu.fit.g18214.yakovlev.Model.State;
 public class GameLogicTests {
   @Test
   public void fieldInitializeTest() {
-    GameLogic logic = new GameLogic();
+    GameLogic logic = new GameLogic(new FieldController());
 
     logic.initializeField();
 
     for (int i = 0; i < logic.getCellCnt(); i++) {
       for (int j = 0; j < logic.getCellCnt(); j++) {
-        Assert.assertEquals(logic.getCellTextureType(i, j), TextureType.FIELD);
+        Assert.assertEquals(logic.getCellTextureType(i,j), TextureType.FIELD);
       }
     }
   }
 
   @Test
   public void gameInitTest() {
-    GameLogic logic = new GameLogic();
+    FieldController controller = new FieldController();
+    controller.initialize();
+    GameLogic logic = new GameLogic(controller);
 
     logic.initializeField();
     logic.gameInit();
@@ -32,7 +34,11 @@ public class GameLogicTests {
 
   @Test
   public void stateCheck() {
-    GameLogic logic = new GameLogic();
+
+    FieldController controller = new FieldController();
+    controller.initialize();
+
+    GameLogic logic = new GameLogic(controller);
 
     logic.initializeField();
     logic.gameInit();
