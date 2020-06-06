@@ -1,7 +1,7 @@
 package ru.nsu.fit.g18214.yakovlev.Model;
 
 
-import ru.nsu.fit.g18214.yakovlev.TextureType;
+import ru.nsu.fit.g18214.yakovlev.Tile;
 
 class Apple extends Fruit {
 
@@ -25,7 +25,7 @@ class Apple extends Fruit {
   }
 
   @Override
-  TextureType getGameTypeForTextures() {
-    return TextureType.RED_FRUIT;
+  Tile getGameTypeForTextures() {
+    return Tile.RED_FRUIT;
   }
 }

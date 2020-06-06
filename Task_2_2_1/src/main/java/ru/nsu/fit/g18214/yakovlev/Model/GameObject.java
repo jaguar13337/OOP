@@ -1,32 +1,32 @@
 package ru.nsu.fit.g18214.yakovlev.Model;
 
-import ru.nsu.fit.g18214.yakovlev.TextureType;
+import ru.nsu.fit.g18214.yakovlev.Tile;
 
 class GameObject{
   private ObjectType type;
-  private TextureType textureType;
+  private Tile tile;
 
   GameObject() {
     this.type = ObjectType.EMPTY;
-    this.textureType = TextureType.FIELD;
+    this.tile = Tile.FIELD;
   }
 
-  void setType(ObjectType type, TextureType textureType) {
+  void setType(ObjectType type, Tile tile) {
     this.type = type;
-    this.textureType = textureType;
+    this.tile = tile;
   }
 
   void setEmptyType() {
     this.type = ObjectType.EMPTY;
-    this.textureType = TextureType.FIELD;
+    this.tile = Tile.FIELD;
   }
 
   ObjectType getType() {
     return type;
   }
 
-  TextureType getTextureType() {
-    return textureType;
+  Tile getTile() {
+    return tile;
   }
 }
 

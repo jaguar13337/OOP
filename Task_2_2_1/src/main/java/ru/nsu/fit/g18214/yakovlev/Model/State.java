@@ -8,5 +8,5 @@ public enum State {
   PAUSE,
   HELP,
   GAMEOVER,
-  DEFAULT
+  GAMERUNNIG
 }

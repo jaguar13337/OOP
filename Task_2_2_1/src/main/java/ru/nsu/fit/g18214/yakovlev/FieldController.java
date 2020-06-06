@@ -75,7 +75,7 @@ public class FieldController {
   /**
    * Allows model to call update of info fields.
    */
-  public void handleGameState() {
+  void handleGameState() {
     State currentState = gameLogic.getState();
     if (paneGameField != null && box != null) {
       Platform.runLater(() -> {
@@ -92,7 +92,7 @@ public class FieldController {
             shortInfo.setText("GAME OVER");
             help.setText("");
             break;
-          case DEFAULT:
+          case GAMERUNNIG:
             shortInfo.setText("");
             help.setText("");
             break;
@@ -122,7 +122,7 @@ public class FieldController {
 
   }
 
-  private Paint typeToPaint(TextureType type) {
+  private Paint typeToPaint(Tile type) {
     switch (type) {
       case FIELD:
         return Paint.valueOf("grey");
@@ -146,7 +146,7 @@ public class FieldController {
   /**
    * Redraws game field using current game logic state.
    */
-  public void redrawField() {
+  void redrawField() {
     if (paneGameField != null && box != null) {
       Paint[][] types = new Paint[gameLogic.getCellCnt()][gameLogic.getCellCnt()];
       for (int i = 0; i < gameLogic.getCellCnt(); i++) {
@@ -185,7 +185,7 @@ public class FieldController {
 
 
   public void initialize() {
-    gameLogic = new GameLogic(this);
+    gameLogic = new GameLogic(new GameLogicObserver(this));
     if (paneGameField != null && box != null) {
       cellSize = (int) paneGameField.getPrefWidth() / gameLogic.getCellCnt();
       ChangeListener<Number> listener = ((observable, oldValue, newValue) -> rescaleFieldSize());

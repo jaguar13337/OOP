@@ -1,12 +1,12 @@
 package ru.nsu.fit.g18214.yakovlev.Model;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import ru.nsu.fit.g18214.yakovlev.FieldController;
-import ru.nsu.fit.g18214.yakovlev.TextureType;
+import ru.nsu.fit.g18214.yakovlev.ObservableAction;
+import ru.nsu.fit.g18214.yakovlev.Observer;
+import ru.nsu.fit.g18214.yakovlev.Tile;
 
 
 /**
@@ -16,18 +16,20 @@ public class GameLogic {
 
   private final int CELL_CNT = 25;
   private final int FRUIT_COUNT = 4;
+  private final Object threadLock = new Object();
+  private final Object stateLock = new Object();
   private Random random = new Random();
   private Snake snake;
-  private ConcurrentLinkedQueue<Fruit> fruits;
-  private State gameState = State.DEFAULT;
+  private List<Fruit> fruits;
+  private State gameState = State.GAMERUNNIG;
   private boolean gameOver;
-  private Deque<Directions> dirsQueue;
+  private ConcurrentLinkedQueue<Directions> dirsQueue;
   private GameField gameField;
   private Thread thread;
-  private FieldController controller;
+  private Observer observer;
 
-  public GameLogic(FieldController controller) {
-    this.controller = controller;
+  public GameLogic(Observer observer) {
+    this.observer = observer;
   }
 
   /**
@@ -38,7 +40,7 @@ public class GameLogic {
    * @param y second coordinate
    * @return Type, which is used for coloring it in the controller.
    */
-  public TextureType getCellTextureType(int x, int y) {
+  public Tile getCellTextureType(int x, int y) {
     return gameField.getTypeForTextures(x, y);
   }
 
@@ -48,7 +50,7 @@ public class GameLogic {
    * @param dir given direction.
    */
   public void addDir(Directions dir) {
-    if (dirsQueue.size() == 0 || dirsQueue.peekLast() != dir) {
+    if (dirsQueue.size() == 0 || dirsQueue.peek() != dir) {
       dirsQueue.add(dir);
     }
   }
@@ -89,16 +91,28 @@ public class GameLogic {
     if (gameState.equals(newState)) {
       if (gameOver) {
         stop();
-        gameState = State.GAMEOVER;
+        synchronized (stateLock) {
+          gameState = State.GAMEOVER;
+        }
       } else {
         inGameRun();
-        gameState = State.DEFAULT;
+        synchronized (stateLock) {
+          gameState = State.GAMERUNNIG;
+        }
       }
     } else {
-      gameState = newState;
+      synchronized (stateLock) {
+        gameState = newState;
+      }
     }
-    controller.handleGameState();
+    observer.update(ObservableAction.STATECHANGED);
+  }
 
+  private State checkGameState() {
+    synchronized (stateLock) {
+      State tmp = gameState;
+      return tmp;
+    }
   }
 
   /**
@@ -142,9 +156,9 @@ public class GameLogic {
    */
   public void gameInit() {
     snake = new Snake(CELL_CNT / 2, CELL_CNT / 2);
-    fruits = new ConcurrentLinkedQueue<>();
-    dirsQueue = new ArrayDeque<>();
-    changeState(State.DEFAULT);
+    fruits = new ArrayList<>();
+    dirsQueue = new ConcurrentLinkedQueue<>();
+    changeState(State.GAMERUNNIG);
     gameOver = false;
     setSnake();
     spawnFood();
@@ -153,19 +167,19 @@ public class GameLogic {
   private void setSnake() {
     for (Coordinate coordinate : snake.getSnakeBody()) {
       gameField.setCellType(coordinate.getX(), coordinate.getY(),
-        ObjectType.SNAKE, TextureType.SNAKE_BODY);
+        ObjectType.SNAKE, Tile.SNAKE_BODY);
     }
     gameField.setCellType(snake.getSnakeTailX(), snake.getSnakeTailY(),
-      ObjectType.SNAKE, TextureType.SNAKE_TAIL);
+      ObjectType.SNAKE, Tile.SNAKE_TAIL);
     gameField.setCellType(snake.getSnakeHeadX(), snake.getSnakeHeadY(),
-      ObjectType.SNAKE, TextureType.SNAKE_HEAD);
+      ObjectType.SNAKE, Tile.SNAKE_HEAD);
   }
 
   private void gameTick() {
     while (!Thread.interrupted()) {
-      if (gameState == State.DEFAULT) {
+      if (checkGameState() == State.GAMERUNNIG) {
         if (dirsQueue.size() > 0) {
-          snake.setDirection(dirsQueue.removeFirst());
+          snake.setDirection(dirsQueue.poll());
         }
 
         Coordinate dels = snake.move();
@@ -174,7 +188,7 @@ public class GameLogic {
           snake.getSnakeHeadX() >= CELL_CNT || snake.getSnakeHeadY() >= CELL_CNT) {
           changeState(State.GAMEOVER);
           gameOver = true;
-          controller.redrawField();
+          observer.update(ObservableAction.GAMETICKEND);
           return;
         }
 
@@ -183,7 +197,7 @@ public class GameLogic {
           if (check && snake.getSnakeHeadX() == coordinate.getX() &&
             snake.getSnakeHeadY() == coordinate.getY()) {
             changeState(State.GAMEOVER);
-            controller.redrawField();
+            observer.update(ObservableAction.GAMETICKEND);
             gameOver = true;
             return;
           }
@@ -206,17 +220,16 @@ public class GameLogic {
         gameField.makeCellEmpty(dels.getX(), dels.getY());
         setSnake();
 
-        controller.redrawField();
+        observer.update(ObservableAction.GAMETICKEND);
         try {
           Thread.sleep(250 - snake.getSpeed() * 10);
         } catch (InterruptedException e) {
           return;
         }
-      }
-      else {
-        synchronized (lock) {
+      } else {
+        synchronized (threadLock) {
           try {
-            lock.wait();
+            threadLock.wait();
           } catch (InterruptedException e) {
             assert false;
           }
@@ -247,13 +260,10 @@ public class GameLogic {
     }
   }
 
-  private final Object lock = new Object();
-
-
   private void inGameRun() {
     if (thread != null) {
-      synchronized (lock) {
-        lock.notify();
+      synchronized (threadLock) {
+        threadLock.notify();
       }
     }
   }

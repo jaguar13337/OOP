@@ -1,6 +1,6 @@
 package ru.nsu.fit.g18214.yakovlev.Model;
 
-import ru.nsu.fit.g18214.yakovlev.TextureType;
+import ru.nsu.fit.g18214.yakovlev.Tile;
 
 class GameField {
   private GameObject[][] gameObjectsField;
@@ -23,11 +23,11 @@ class GameField {
     return gameObjectsField[x][y].getType();
   }
 
-  TextureType getTypeForTextures(int x, int y) {
-    return gameObjectsField[x][y].getTextureType();
+  Tile getTypeForTextures(int x, int y) {
+    return gameObjectsField[x][y].getTile();
   }
 
-  void setCellType(int x, int y, ObjectType type, TextureType texturesType) {
+  void setCellType(int x, int y, ObjectType type, Tile texturesType) {
     gameObjectsField[x][y].setType(type, texturesType);
   }
 

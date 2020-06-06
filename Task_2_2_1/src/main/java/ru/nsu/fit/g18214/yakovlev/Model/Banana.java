@@ -1,6 +1,6 @@
 package ru.nsu.fit.g18214.yakovlev.Model;
 
-import ru.nsu.fit.g18214.yakovlev.TextureType;
+import ru.nsu.fit.g18214.yakovlev.Tile;
 
 class Banana extends Fruit {
 
@@ -9,8 +9,8 @@ class Banana extends Fruit {
   }
 
   @Override
-  TextureType getGameTypeForTextures() {
-    return TextureType.YELLOW_FRUIT;
+  Tile getGameTypeForTextures() {
+    return Tile.YELLOW_FRUIT;
   }
 
   @Override
