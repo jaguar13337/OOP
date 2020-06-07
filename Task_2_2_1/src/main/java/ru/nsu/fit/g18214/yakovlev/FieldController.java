@@ -35,6 +35,9 @@ public class FieldController {
   @FXML
   private Label score;
 
+  GameLogic getGameLogic() {
+    return gameLogic;
+  }
 
   public FieldController() {
   }
@@ -75,8 +78,7 @@ public class FieldController {
   /**
    * Allows model to call update of info fields.
    */
-  void handleGameState() {
-    State currentState = gameLogic.getState();
+  private void handleGameState(State currentState) {
     if (paneGameField != null && box != null) {
       Platform.runLater(() -> {
         switch (currentState) {
@@ -146,7 +148,7 @@ public class FieldController {
   /**
    * Redraws game field using current game logic state.
    */
-  void redrawField() {
+  private void redrawField() {
     if (paneGameField != null && box != null) {
       Paint[][] types = new Paint[gameLogic.getCellCnt()][gameLogic.getCellCnt()];
       for (int i = 0; i < gameLogic.getCellCnt(); i++) {
@@ -185,7 +187,17 @@ public class FieldController {
 
 
   public void initialize() {
-    gameLogic = new GameLogic(new GameLogicObserver(this));
+    gameLogic = new GameLogic(new Observer() {
+      @Override
+      public void stateChanged(State state) {
+        handleGameState(state);
+      }
+
+      @Override
+      public void tickEnd() {
+        redrawField();
+      }
+    });
     if (paneGameField != null && box != null) {
       cellSize = (int) paneGameField.getPrefWidth() / gameLogic.getCellCnt();
       ChangeListener<Number> listener = ((observable, oldValue, newValue) -> rescaleFieldSize());
@@ -194,8 +206,6 @@ public class FieldController {
     } else {
       cellSize = 100;
     }
-    ;
     gameLogic.changeState(State.HELP);
-    handleGameState();
   }
 }

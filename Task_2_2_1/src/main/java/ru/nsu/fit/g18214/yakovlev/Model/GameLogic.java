@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import ru.nsu.fit.g18214.yakovlev.ObservableAction;
 import ru.nsu.fit.g18214.yakovlev.Observer;
 import ru.nsu.fit.g18214.yakovlev.Tile;
 
@@ -70,7 +69,9 @@ public class GameLogic {
    * @return current game state.
    */
   public State getState() {
-    return gameState;
+    synchronized (stateLock) {
+      return gameState;
+    }
   }
 
   /**
@@ -88,30 +89,19 @@ public class GameLogic {
    * @param newState new game state.
    */
   public void changeState(State newState) {
-    if (gameState.equals(newState)) {
-      if (gameOver) {
-        stop();
-        synchronized (stateLock) {
+    synchronized (stateLock) {
+      if (gameState.equals(newState)) {
+        if (gameOver) {
+          stop();
           gameState = State.GAMEOVER;
-        }
-      } else {
-        inGameRun();
-        synchronized (stateLock) {
+        } else {
+          inGameRun();
           gameState = State.GAMERUNNIG;
         }
-      }
-    } else {
-      synchronized (stateLock) {
+      } else if (!(gameOver && newState == State.PAUSE)) {
         gameState = newState;
       }
-    }
-    observer.update(ObservableAction.STATECHANGED);
-  }
-
-  private State checkGameState() {
-    synchronized (stateLock) {
-      State tmp = gameState;
-      return tmp;
+      observer.stateChanged(gameState);
     }
   }
 
@@ -177,7 +167,7 @@ public class GameLogic {
 
   private void gameTick() {
     while (!Thread.interrupted()) {
-      if (checkGameState() == State.GAMERUNNIG) {
+      if (getState() == State.GAMERUNNIG) {
         if (dirsQueue.size() > 0) {
           snake.setDirection(dirsQueue.poll());
         }
@@ -188,7 +178,7 @@ public class GameLogic {
           snake.getSnakeHeadX() >= CELL_CNT || snake.getSnakeHeadY() >= CELL_CNT) {
           changeState(State.GAMEOVER);
           gameOver = true;
-          observer.update(ObservableAction.GAMETICKEND);
+          observer.tickEnd();
           return;
         }
 
@@ -197,7 +187,7 @@ public class GameLogic {
           if (check && snake.getSnakeHeadX() == coordinate.getX() &&
             snake.getSnakeHeadY() == coordinate.getY()) {
             changeState(State.GAMEOVER);
-            observer.update(ObservableAction.GAMETICKEND);
+            observer.tickEnd();
             gameOver = true;
             return;
           }
@@ -220,7 +210,7 @@ public class GameLogic {
         gameField.makeCellEmpty(dels.getX(), dels.getY());
         setSnake();
 
-        observer.update(ObservableAction.GAMETICKEND);
+        observer.tickEnd();
         try {
           Thread.sleep(250 - snake.getSpeed() * 10);
         } catch (InterruptedException e) {
