@@ -90,11 +90,11 @@ public class FieldController {
             shortInfo.setText("PAUSE");
             help.setText("");
             break;
-          case GAMEOVER:
+          case GAME_OVER:
             shortInfo.setText("GAME OVER");
             help.setText("");
             break;
-          case GAMERUNNIG:
+          case GAME_RUNNING:
             shortInfo.setText("");
             help.setText("");
             break;

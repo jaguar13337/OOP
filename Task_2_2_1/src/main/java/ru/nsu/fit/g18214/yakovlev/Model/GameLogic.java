@@ -15,12 +15,11 @@ public class GameLogic {
 
   private final int CELL_CNT = 25;
   private final int FRUIT_COUNT = 4;
-  private final Object threadLock = new Object();
-  private final Object stateLock = new Object();
+  private final Object lock = new Object();
   private Random random = new Random();
   private Snake snake;
   private List<Fruit> fruits;
-  private State gameState = State.GAMERUNNIG;
+  private volatile State gameState = State.GAME_RUNNING;
   private boolean gameOver;
   private ConcurrentLinkedQueue<Directions> dirsQueue;
   private GameField gameField;
@@ -69,7 +68,7 @@ public class GameLogic {
    * @return current game state.
    */
   public State getState() {
-    synchronized (stateLock) {
+    synchronized (lock) {
       return gameState;
     }
   }
@@ -89,16 +88,16 @@ public class GameLogic {
    * @param newState new game state.
    */
   public void changeState(State newState) {
-    synchronized (stateLock) {
+    synchronized (lock) {
       if (gameState.equals(newState)) {
         if (gameOver) {
           stop();
-          gameState = State.GAMEOVER;
+          gameState = State.GAME_OVER;
         } else {
           inGameRun();
-          gameState = State.GAMERUNNIG;
+          gameState = State.GAME_RUNNING;
         }
-      } else if (!(gameOver && newState == State.PAUSE)) {
+      } else if (!(gameState == State.GAME_OVER && newState == State.PAUSE)) {
         gameState = newState;
       }
       observer.stateChanged(gameState);
@@ -148,7 +147,7 @@ public class GameLogic {
     snake = new Snake(CELL_CNT / 2, CELL_CNT / 2);
     fruits = new ArrayList<>();
     dirsQueue = new ConcurrentLinkedQueue<>();
-    changeState(State.GAMERUNNIG);
+    changeState(State.GAME_RUNNING);
     gameOver = false;
     setSnake();
     spawnFood();
@@ -167,7 +166,7 @@ public class GameLogic {
 
   private void gameTick() {
     while (!Thread.interrupted()) {
-      if (getState() == State.GAMERUNNIG) {
+      if (getState() == State.GAME_RUNNING) {
         if (dirsQueue.size() > 0) {
           snake.setDirection(dirsQueue.poll());
         }
@@ -176,7 +175,7 @@ public class GameLogic {
 
         if (snake.getSnakeHeadY() < 0 || snake.getSnakeHeadX() < 0 ||
           snake.getSnakeHeadX() >= CELL_CNT || snake.getSnakeHeadY() >= CELL_CNT) {
-          changeState(State.GAMEOVER);
+          changeState(State.GAME_OVER);
           gameOver = true;
           observer.tickEnd();
           return;
@@ -186,7 +185,7 @@ public class GameLogic {
         for (Coordinate coordinate : snake.getSnakeBody()) {
           if (check && snake.getSnakeHeadX() == coordinate.getX() &&
             snake.getSnakeHeadY() == coordinate.getY()) {
-            changeState(State.GAMEOVER);
+            changeState(State.GAME_OVER);
             observer.tickEnd();
             gameOver = true;
             return;
@@ -217,15 +216,18 @@ public class GameLogic {
           return;
         }
       } else {
-        synchronized (threadLock) {
-          try {
-            threadLock.wait();
-          } catch (InterruptedException e) {
-            assert false;
+        while (getState() != State.GAME_RUNNING) {
+          synchronized (lock) {
+            try {
+              lock.wait();
+            } catch (InterruptedException e) {
+              assert false;
+            }
           }
         }
       }
     }
+
   }
 
   /**
@@ -252,8 +254,8 @@ public class GameLogic {
 
   private void inGameRun() {
     if (thread != null) {
-      synchronized (threadLock) {
-        threadLock.notify();
+      synchronized (lock) {
+        lock.notify();
       }
     }
   }

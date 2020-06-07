@@ -31,7 +31,7 @@ public class GameLogicTest {
     logic.gameInit();
 
     Assert.assertEquals((int) logic.getScore(), 0);
-    Assert.assertEquals(logic.getState(), State.GAMERUNNIG);
+    Assert.assertEquals(logic.getState(), State.GAME_RUNNING);
   }
 
   @Test
@@ -45,16 +45,16 @@ public class GameLogicTest {
     logic.initializeField();
     logic.gameInit();
 
-    Assert.assertEquals(logic.getState(), State.GAMERUNNIG);
+    Assert.assertEquals(logic.getState(), State.GAME_RUNNING);
 
     logic.changeState(State.HELP);
     Assert.assertEquals(logic.getState(), State.HELP);
 
-    logic.changeState(State.GAMEOVER);
-    Assert.assertEquals(logic.getState(), State.GAMEOVER);
+    logic.changeState(State.GAME_OVER);
+    Assert.assertEquals(logic.getState(), State.GAME_OVER);
 
 
     logic.changeState(State.PAUSE);
-    Assert.assertEquals(logic.getState(), State.PAUSE);
+    Assert.assertEquals(logic.getState(), State.GAME_OVER);
   }
 }
