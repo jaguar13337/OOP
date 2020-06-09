@@ -216,8 +216,8 @@ public class GameLogic {
           return;
         }
       } else {
-        while (getState() != State.GAME_RUNNING) {
-          synchronized (lock) {
+        synchronized (lock) {
+          while (gameState != State.GAME_RUNNING) {
             try {
               lock.wait();
             } catch (InterruptedException e) {
