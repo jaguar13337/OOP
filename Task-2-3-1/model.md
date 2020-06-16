@@ -1,57 +1,192 @@
-# Model
-### Objects
-* Task:
-    * UUID
-    * Name
-    * Number of points
-    * Deadline
-* Group:
-    * Number
-    * Count of students
-    * List of all students
-* Student”
-    * Name and Surname
+# Модель
+## Объекты
+* __Задача:__
+    * Название
+        - Строковое значение в следующем формате: Краткое имя\_Номер семестра\_Номер блока задач\_Номер задачи
+        -  __Пример:__ Snake\_2\_2\_1
+    * Количнствово баллов за задачу - целое число
+        - Количество баллов, которое можно получить за решение задачи без доп условий и в срок.
+    * Можно добавить новое задание следующим образом:
+        - with_name "Название задания"
+        - with_points "Количество баллов за сдачу задачи"
+        - __Пример:__
+            ```groovy
+            add task with_name "Snake_2_2_1" with_points 2 
+            ```
+        - Вводить параметры можно в любом порядке.
+* __Группа:__
+    * Номер
+        - Целое число
+        - __Пример:__ 18214
+    * Список студендов
+    * Создание новой группы:
+        - with_number "номер группы"
+        - __Пример:__
+            ```groovy
+            add group with_number 18214 
+            ```
+        - Вводить параметры можно в любом порядке.
+* __Студент:__
+    * Имя
+        - Строковое значение
+        - __Пример:__ "Yakovlev Arthur"
+    * ID
+        - Уникальный ID для идентификации студента
+        - __Пример:__ "ayakovlev"
     * Repository URL
-    * UUID
-    * List of given tasks
-    * List of complited tasks
-* Current global task:
-    * UUID
-    * Deadline
-* Сontrol:
-    * Points
-    * Date
-* Workshops:
-    * Date.
-    * Number
-    * Attendance
+        - URL адрес репозитория студента.
+        - __Пример:__
+        "https://github.com/ayakovlev18214/OOP"
+    * Список сданных задач
+        - Список задач, которые были засчитаны студенту.
+        - Каждая запись содержит Имя задания, дату сдачи (Date), а также количество баллов за эту задачу.
+    * Добавление новых студентов:
+        - with_name "Имя"
+        - with_id "Уникальный ID"
+        - with_rep "URL репозитория"
+        - to "Номер группы"
+        - _Пример:__
+            ```groovy
+            add student with_name "Arthur" with_id "ayakovlev" with_rep "https://github.com/" to 18214
+            ```
+       - Вводить параметры можно в любом порядке.
+    * Чтобы засчитать студенту задание, необходимо использовать следующую конструкцию:
+        - accept "Name задачи"
+        - for_student "Уникальный ID студента"
+        - on "Дата сдачи задачи в формате ДД.ММ.ГГГ"
+        - with "Количество баллов за сдачу"
+        - Последнее - является опциональным (Использовать, если необходимо поставить не стандартное количество баллов за задачу)
+        - __Пример:__
+            ```groovy
+            accept "Snake-2-2-1" for_student "ayakovelvev" on "07.06.2020" with 500
+            ```
+        - Вводить параметры можно в любом порядке.
+* __Контрольная точка:__
+    * Дата:
+        - День, когда оценка студенту будет выставлена.
+    * Шкала оценивания:
+        - Сколько необходимо баллов на 3, 4, 5
+    * Для добавления контрольной точки нужно:
+        - add control_point - добавить контрольную точку
+        - sat "кол-во баллов на 3"
+        - good "кол-во баллов на 4"
+        - exc "кол-во баллов на 5"
+        - on "дата в формате ДД.ММ.ГГГГ"
+        - __Пример:__
+            ```groovy
+            add control_point sat 5 good 7 exc 10 on "07.05.2020"
+            ```
+        - Вводить параметры можно в любом порядке.
+* __Семинары:__
+    * Дата
+        - Типа Date
+    * Список присутствующих студентов
+        - Есть возможность проставить присутствие на семинаре в ручном режиме. Автоматически же присутствие проставится по наличию коммитов за неделю до семинара.
+    * Есть два способа добавить семинары:
+        *   Первый случай, если вы хотите доавить семинар на конкретную дату:
+            - on "Дата проведения семинара"
+            - for_group "ID группы, у которой семинар"
+                ```groovy
+                add lesson on "07.05.2020" for_group 18214
+                ```
+        *   Второй случай, если вы знаете, что семинары будут каждые N дней:
+            - for_group "ID группы, у которой семинар"
+            - from "Дата первого семинара в формате dd.mm.yyyy"
+            - to "Последний день обучения в формате dd.mm.yyyy"
+            - every "Каждые сколько дней проходит семинар"
+                ```groovy
+                add lesson for_group 18214 from "04.02.2020" to "31.05.2020" every 7
+                ```
+        * В любом случае порядок аргументов не важен.
+    * Для изменения статуса присутствия студента на семинаре нужно использовать следующее:
+        - Если студент присутствовал:
+            ```groovy
+            present "ayakovlev" on "07.05.2020" in_group 18214
+            ```
+        - Если отсутствовал:
+            ```groovy
+            absent "ayakovlev" on "07.05.2020" in_group 18214
+            ```
+        - Вводить параметры после absent "name" можно в любом порядке.
+## Процессы
+
+### Заполнение объектов:
+    В момент запуска JAR, программа пытается открыть файл config.nsu. Если его не существует, то пытается открыть файл, который был передан в качестве аргумента после ключа -c.  
+    Груви считывает DSL и заполняет объекты, которые уже в свою очередь могут использовать Java классы.
+### Скачать репозитории студентов: 
+    Проходимся по всем студентам и от каждого из них вызываем метод “downloadRepositories( student.getRepUrl() )”.
+    Если в текущей директории нет папки с текущим repUrl то:
+        Внутри происходит создание подпроцесса с командой git clone "URL репозитория студента".
+        В случае неудачи - пишет сообщение в stdout "Unable to clone rep: " + repUrl и возвращает fasle.
+        После получения false - программа продолжает пытаться отработать остальные команды.
+        Иначе, метод возвращает true.
+    Иначе, если директория существует:
+        Внутри происходит создание подпроцесса с командой git pull
+        В случае неудачи - пишет сообщение в stdout "Unable to clone rep: " + repUrl и возвращает fasle.
+        После получения false - программа продолжает пытаться отработать остальные команды.
+        Иначе, метод возвращает true.
+### Сборка программы:
+    Если пользователь запросит сборку программы, будет вызван метод tryBuild(task)
+    Внутри происхдит создание подпроцесса в директории с именем задачи, однако краткое имя меняется на task.
+        Например, в config было задание Snake-2-2-1. Здесь Snake заменится на task.
+    Далее подпроцесс исполняет команду gradle build, читая и разбирая вывод.
+    В случае BUILD SUCCESS, возвращает True.
+### Генерация документации
+    Если пользователь запросить генерацию документации для task, вызывается метод generateDocs(task)
+    Внутри в папке с задачей создается подпроцесс, который вызывае команду gradlew javadoc.
+    Если удалось создать докумментацию успешно - вернет True.
+### Проверка codestyle
+    Для задачи можно вызвать метод checkCodestyle()
+    У студента в build.gradle должен быть импортирован плагин codestyle, а также должна быть папка config,
+    в которой должен лежать .xml файл, который содержит google codestyle.
+    Если ошибок нет - вернет True.
+### Запуск тестов
+    Для задачи можно проверить, проходит ли она unit-тесты, вызвав функцию chechTests()
+    Создается подпроцесс, который вызывает команду gradlew test
+    Если тесты пройдены успешно - вернет True
+### Генерация отчета
+    Проход по всем студентам из группы:
+    
+    Отчет по успеваемости
+    1. Просматривается список выполненых заданий
+    2. Подсчитывается количество баллов на каждую контрольную точку
+    3. За каждую контрольную точку выставляется оценка  
+    4. Скачивается репозиторий
+    5. С каждой задачей происходят следующие операции:
+        1. Сборка
+        2. Тесты
+        3. Проверка кодстайла
+        4. Генерация документации
+    6. Успех или неудача каждого из выше перечислинных пунктов вносится в документацию
+    
+    Отчет по посещаемости
+    1. Просматривается каждое занятие
+    2. Если посещение для студента не проставлено в ручном режиме:
+        - В репозитории пользователя проверяется наличие коммитов не более чем за неделю до занятия
+            - Создается подпроцесс, отрабатывающий команду git rev-list --count --all --since="Дата семинара - одна неделя" --before="Дата семинара" 
+        -  Если коммиты есть, ставится посещение, иначе пропуск.
+    3. Все данные вносятся в выходной файл
+        - Выходной файл - таблица в формате HTML.
+        - В папке, откуда был вызван jar создается файл "report.html" (Если в момент запуска не было ключа -o "path/to/report")
+        - В этот файл записывается таблица. 
+
+    Итоговая оценка на текущий момент ставится по правилам:
+    1. Более 50% пропусков -2 балла к итоговой, более 25% -1 балл 
+    2. Сама оценка = средняя оценка по всем контрольным точкам с округлением вверх - баллы за пропуски
+
+## Интерфейс
+* Для запуска программы достаточно в той же директории иметь файл config.nsu. Или же передать путь до него после флага -c.
+* Ключи:
+    - -o "path/to/report" -> Путь, куда записать отчет. (Если не указан - сохранит в текущую директорию)
+    - -c "path/to/config" -> Путь до конфигурационного файла.
+    
 
 
-### Processes and their implementation
+__Примеры:__
+```
+task-2-3-1 -c "D:\config\config.nsu" -o "D:\reports\report_01.10.2000.html"
+```
 
-* Filling the structures of progran in java
-    * Implementation - At the beginning, files like config.groovy finded by main program. They are transferred to the execution of the subroutine at groovy, this progran returns to java ready structures.     
-* Upload necessary tasks files from git repo into directiory: 
-    * Implementation - Call (from java code) “download repositories” with all necessary  arguments with are taken from the filled stuctures. 
-* Run compilation process
-    * Implementation - java Code calls from the project dir "gradle build"
-* Generate documentatiom
-    * Implementation - Gradle doc
-* Check Google Java Style
-    * Implementation - java calls necessary program, which is check that.
-* Run tests
-    * Implementation - Call from the project dir gradle test      
-* Count the number of
-    * Successful
-    * Failed
-    * Not runned
-    * Fill the stucture based on that.
-    * Implementation - Count the number while gradle test.
-* Count the number of points for this task.
-    * Implementation - Call method, which will count it somehow, using earlier given logic. 
-* Calculate the total number of points and grades for each control point and the final certification. (The sum of points to the control point) Based on this, calculate the final grade at the moment
-    * Implementation - Call a function that will go through all the tasks for which the date is less than the date of the control point and sum their points. After that, according to some logic. 
-* Generate a report in HTML.
-    * Call method, which will check all the students and print HTML report.
-
-
+```
+task-2-3-1
+```
