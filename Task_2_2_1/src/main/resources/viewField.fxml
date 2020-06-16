@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+<StackPane
+  maxHeight="1.7976931348623157E308"
+  maxWidth="1.7976931348623157E308"
+  minHeight="0.0"
+  minWidth="0.0" onKeyTyped="#keyHandler"
+  prefHeight="400.0" prefWidth="600.0"
+  xmlns="http://javafx.com/javafx/11.0.1"
+  xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="ru.nsu.fit.g18214.yakovlev.FieldController">
+  <children>
+    <BorderPane
+      maxHeight="1.7976931348623157E308"
+      maxWidth="1.7976931348623157E308"
+      minHeight="0.0"
+      minWidth="0.0"
+      prefHeight="200.0"
+      prefWidth="200.0">
+      <center>
+        <AnchorPane
+          maxHeight="1.7976931348623157E308"
+          maxWidth="1.7976931348623157E308"
+          minHeight="0.0"
+          minWidth="0.0"
+          prefHeight="200.0"
+          prefWidth="200.0"
+          style="-fx-background-color: lightgreen;"
+          BorderPane.alignment="CENTER">
+          <children>
+            <HBox
+              fx:id="box" alignment="CENTER" maxHeight="1.7976931348623157E308"
+              maxWidth="1.7976931348623157E308"
+              minHeight="0.0"
+              minWidth="0.0"
+              prefHeight="400.0"
+              prefWidth="600.0"
+              AnchorPane.bottomAnchor="10.0"
+              AnchorPane.leftAnchor="10.0"
+              AnchorPane.rightAnchor="10.0"
+              AnchorPane.topAnchor="10.0">
+              <children>
+                <StackPane
+                  maxHeight="1.7976931348623157E308"
+                  maxWidth="1.7976931348623157E308"
+                  minHeight="0.0"
+                  minWidth="0.0"
+                  prefHeight="380.0"
+                  prefWidth="504.0"
+                  style="-fx-background-color: lightgreen;"
+                  HBox.hgrow="ALWAYS">
+                  <children>
+                    <Pane fx:id="paneGameField"
+                      maxHeight="-Infinity"
+                      maxWidth="-Infinity"
+                      minHeight="-Infinity"
+                      minWidth="-Infinity"
+                      prefHeight="300.0"
+                      prefWidth="300.0"
+                      style="-fx-background-color: gray;"
+                      StackPane.alignment="CENTER"/>
+                    <Label fx:id="shortInfo" textFill="RED">
+                      <font>
+                        <Font size="20.0"/>
+                      </font>
+                    </Label>
+                    <Label fx:id="score" minHeight="0.0" minWidth="0.0" textFill="RED"
+                      StackPane.alignment="CENTER_LEFT">
+                      <font>
+                        <Font size="20.0"/>
+                      </font>
+                    </Label>
+                  </children>
+                </StackPane>
+                <Label fx:id="help"
+                  alignment="CENTER_RIGHT"
+                  minHeight="0.0"
+                  minWidth="0.0"
+                  textAlignment="JUSTIFY"
+                  textFill="RED"
+                  textOverrun="WORD_ELLIPSIS"
+                  wrapText="true">
+                  <font>
+                    <Font size="10.0"/>
+                  </font>
+                </Label>
+              </children>
+            </HBox>
+          </children>
+        </AnchorPane>
+      </center>
+    </BorderPane>
+  </children>
+</StackPane>
