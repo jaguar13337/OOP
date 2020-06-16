@@ -9,7 +9,7 @@ class Main {
     static void main(String[] args) {
 
 
-        Integer groupId = 18214;
+        Integer groupId = null
 
         String currDir = System.getProperty("user.dir")
         String cfgPath = currDir + "/config.nsu"
@@ -25,25 +25,32 @@ class Main {
             }
         }
 
-        try {
-            ConfigDSL configDSL = EngineDSL.executeDSL(cfgPath)
-            Logic logic = new Logic(configDSL)
-            File file = new File(reportPath);
-            if (!file.exists()) {
-                file.createNewFile();
+        if (groupId == null) {
+            println "Введите необходимю команду, " +
+                    "а также номер группы, для которой эту команду нужно исполнить"
+        } else {
+
+            try {
+                ConfigDSL configDSL = EngineDSL.executeDSL(cfgPath)
+                Logic logic = new Logic(configDSL)
+                File file = new File(reportPath);
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                FileWriter writer = new FileWriter(file);
+
+                logic.performanceReport(groupId, writer)
+                logic.attendanceReport(groupId, writer)
+
+                writer.close();
+            } catch (IllegalArgumentException ignored) {
+                println "Введена неправильная группа: " + groupId
+            } catch (FileNotFoundException ignored) {
+                println "Невозможно найти файл: " + cfgPath
+            } catch (IOException ignored) {
+                println "Невозможно открыть файл: " + reportPath
             }
-            FileWriter writer = new FileWriter(file);
-
-            logic.performanceReport(groupId, writer)
-            logic.attendanceReport(groupId, writer)
-
-            writer.close();
-        } catch (IllegalArgumentException ignored) {
-            println "Введена неправильная группа: " + groupId
-        } catch (FileNotFoundException ignored) {
-            println "Невозможно найти файл: " + cfgPath
-        } catch (IOException ignored) {
-            println "Невозможно открыть файл: " + reportPath
         }
     }
+
 }
