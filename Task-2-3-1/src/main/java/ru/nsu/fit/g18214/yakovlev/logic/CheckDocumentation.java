@@ -22,7 +22,7 @@ public class CheckDocumentation implements Command {
   @Override
   public void runCommand() throws IOException {
     GradleService gradle = new Gradle();
-    if (gradle.compileTask(taskName, student)) {
+    if (gradle.buildTask(taskName, student)) {
       writer.write(new Formatter().format("Для задачи %s у студента %s документация" +
           " сгенерирована успешно.",
         taskName,

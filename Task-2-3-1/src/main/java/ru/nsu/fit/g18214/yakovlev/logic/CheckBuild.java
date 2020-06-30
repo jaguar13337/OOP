@@ -22,7 +22,7 @@ class CheckBuild implements Command {
   @Override
   public void runCommand() throws IOException {
     GradleService gradle = new Gradle();
-    if (gradle.compileTask(taskName, student)) {
+    if (gradle.buildTask(taskName, student)) {
       writer.write(new Formatter().format("Задача %s у студента %s собрана успешно",
         taskName,
         student.getName()).toString());

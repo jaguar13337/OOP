@@ -22,7 +22,7 @@ class CheckCodestyle implements Command {
   @Override
   public void runCommand() throws IOException {
     GradleService gradle = new Gradle();
-    if (gradle.checkCodeStyle(taskName, student)) {
+    if (gradle.checkcodestyle(taskName, student)) {
       writer.write(new Formatter().format("Для задачи %s у студента %s кодстайл соблюден",
         taskName,
         student.getName()).toString());

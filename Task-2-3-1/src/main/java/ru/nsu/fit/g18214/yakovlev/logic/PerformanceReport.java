@@ -100,19 +100,19 @@ public class PerformanceReport implements Command {
     //Filling information for the every accepted task.
     for (String taskName : student.getAcceptedTasks().keySet()) {
       studentData[j] =
-        gradleService.compileTask(taskName, student)
+        gradleService.buildTask(taskName, student)
           ? "+"
           : "-";
       j++;
 
       studentData[j] =
-        gradleService.checkCodeStyle(taskName, student)
+        gradleService.checkcodestyle(taskName, student)
           ? "+"
           : "-";
       j++;
 
       studentData[j] =
-        gradleService.generateDocumentation(taskName, student)
+        gradleService.generateDocs(taskName, student)
           ? "+"
           : "-";
       j++;
