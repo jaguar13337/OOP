@@ -1,17 +1,18 @@
 package ru.nsu.fit.g18214.yakovlev.dsl.language
 
-import ru.nsu.fit.g18214.yakovlev.dsl.engine.*
+import ru.nsu.fit.g18214.yakovlev.dsl.engine.Config
+import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.*
 
 import java.text.SimpleDateFormat
 
-abstract class LangDSL extends Script {
+abstract class Lang extends Script {
 
     final String dateFormat = "dd.MM.yyyy"
 
-    ConfigDSL config
+    Config config
 
     def run() {
-        config = new ConfigDSL()
+        config = new Config()
         script()
         config
     }
@@ -19,7 +20,7 @@ abstract class LangDSL extends Script {
     abstract void script()
 
     Closure student = {
-        StudentDSL student = new StudentDSL()
+        Student student = new Student()
         clMap = [with_name: {
             String name ->
                 student.name = name
@@ -34,7 +35,7 @@ abstract class LangDSL extends Script {
                 clMap
         }, to             : {
             Integer number ->
-                for (GroupDSL gr : config.getGroups()) {
+                for (Group gr : config.getGroups()) {
                     if (gr.groupId == number) {
                         gr.students.add(student)
                         break
@@ -45,7 +46,7 @@ abstract class LangDSL extends Script {
     }
 
     Closure group = {
-        GroupDSL group = new GroupDSL()
+        Group group = new Group()
         clMap = [with_number: {
             Integer number ->
                 group.groupId = number
@@ -55,7 +56,7 @@ abstract class LangDSL extends Script {
     }
 
     Closure task = {
-        TaskDSL task = new TaskDSL()
+        Task task = new Task()
         config.tasks.add(task)
         clMap = [with_name: {
             String name ->
@@ -69,7 +70,7 @@ abstract class LangDSL extends Script {
     }
 
     Closure control_point = {
-        ControlPointDSL control = new ControlPointDSL()
+        ControlPoint control = new ControlPoint()
         clMap = [sat: {
             Integer points ->
                 control.setPointsForSatGrade(points)
@@ -92,14 +93,14 @@ abstract class LangDSL extends Script {
 
     Closure lesson = {
         SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat)
-        LessonDSL lesson = null
+        Lesson lesson = null
         Calendar fromDate = null
         Calendar untilDate = null
-        GroupDSL group = null
+        Group group = null
         Integer daysBetweenLessons = null
         clMap = [on : {
             String date ->
-                lesson = new LessonDSL()
+                lesson = new Lesson()
                 lesson.date = dateFormater.parse(date)
                 if (group != null) {
                     group.lessons.add(lesson)
@@ -130,7 +131,7 @@ abstract class LangDSL extends Script {
                 clMap
         }, for_group: {
             Integer id ->
-                for (GroupDSL groupDSL : config.groups) {
+                for (Group groupDSL : config.groups) {
                     if (groupDSL.groupId == id) {
                         group = groupDSL
                         break
@@ -151,8 +152,8 @@ abstract class LangDSL extends Script {
     }
 
     Closure accept = { String taskId ->
-        AcceptedTaskDSL acceptedTask = new AcceptedTaskDSL()
-        for (TaskDSL task : config.tasks) {
+        AcceptedTask acceptedTask = new AcceptedTask()
+        for (Task task : config.tasks) {
             if (taskId == task.name) {
                 acceptedTask.pointForTask = task.points
                 break
@@ -160,8 +161,8 @@ abstract class LangDSL extends Script {
         }
         clMap = [for_student: {
             String id ->
-                for (GroupDSL groupDSL : config.groups) {
-                    for (StudentDSL studentDSL : groupDSL.students) {
+                for (Group groupDSL : config.groups) {
+                    for (Student studentDSL : groupDSL.students) {
                         if (studentDSL.id == id) {
                             studentDSL.acceptedTasks[taskId] = acceptedTask
                             clMap
@@ -184,13 +185,13 @@ abstract class LangDSL extends Script {
 
     Closure present = {
         String studentId ->
-            GroupDSL groupDSL = null
+            Group groupDSL = null
             Date date = null
             clMap = [on: {
                 String lessonDate ->
                     date = new SimpleDateFormat(dateFormat).parse(lessonDate)
                     if (groupDSL != null) {
-                        for (LessonDSL lessonDSL : groupDSL.lessons) {
+                        for (Lesson lessonDSL : groupDSL.lessons) {
                             if (lessonDSL.date == date) {
                                 lessonDSL.attendance.put(studentId, true)
                                 break
@@ -198,16 +199,16 @@ abstract class LangDSL extends Script {
                         }
                     }
                     clMap
-            }, in_group : {
+            }, in_group: {
                 Integer groupId ->
-                    for (GroupDSL group : config.groups) {
+                    for (Group group : config.groups) {
                         if (group.groupId == groupId) {
                             groupDSL = group
                             break
                         }
                     }
                     if (date != null) {
-                        for (LessonDSL lessonDSL : groupDSL.lessons) {
+                        for (Lesson lessonDSL : groupDSL.lessons) {
                             if (lessonDSL.date == date) {
                                 lessonDSL.attendance.put(studentId, true)
                                 break
@@ -219,13 +220,13 @@ abstract class LangDSL extends Script {
 
     Closure absent = {
         String studentId ->
-            GroupDSL groupDSL = null
+            Group groupDSL = null
             Date date = null
             clMap = [on: {
                 String lessonDate ->
                     date = new SimpleDateFormat(dateFormat).parse(lessonDate)
                     if (groupDSL != null) {
-                        for (LessonDSL lessonDSL : groupDSL.lessons) {
+                        for (Lesson lessonDSL : groupDSL.lessons) {
                             if (lessonDSL.date == date) {
                                 lessonDSL.attendance.put(studentId, false)
                                 break
@@ -233,16 +234,16 @@ abstract class LangDSL extends Script {
                         }
                     }
                     clMap
-            }, in_group : {
+            }, in_group: {
                 Integer groupId ->
-                    for (GroupDSL group : config.groups) {
+                    for (Group group : config.groups) {
                         if (group.groupId == groupId) {
                             groupDSL = group
                             break
                         }
                     }
                     if (date != null) {
-                        for (LessonDSL lessonDSL : groupDSL.lessons) {
+                        for (Lesson lessonDSL : groupDSL.lessons) {
                             if (lessonDSL.date == date) {
                                 lessonDSL.attendance.put(studentId, false)
                                 break
@@ -253,9 +254,9 @@ abstract class LangDSL extends Script {
             }]
     }
 
-    Closure fillLessons = { Integer daysBetweenLessons, Calendar from, Calendar to, GroupDSL group ->
+    Closure fillLessons = { Integer daysBetweenLessons, Calendar from, Calendar to, Group group ->
         while (from <= to) {
-            LessonDSL lesson = new LessonDSL()
+            Lesson lesson = new Lesson()
             lesson.date = from.getTime()
             group.lessons.add(lesson)
             from.add(Calendar.DAY_OF_MONTH, daysBetweenLessons)

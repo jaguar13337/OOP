@@ -2,7 +2,7 @@ package ru.nsu.fit.g18214.yakovlev.git;
 
 import java.util.Date;
 
-public interface GithubCalls {
+public interface GithubService {
 
   boolean downloadRepository(String gitRepoURL);
 

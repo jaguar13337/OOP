@@ -1,6 +1,6 @@
-package ru.nsu.fit.g18214.yakovlev.dsl.engine
+package ru.nsu.fit.g18214.yakovlev.dsl.engine.Model
 
-class ControlPointDSL implements Comparable<ControlPointDSL> {
+class ControlPoint implements Comparable<ControlPoint> {
     Date date
     Integer[] grades = new Integer[3]
 
@@ -29,7 +29,7 @@ class ControlPointDSL implements Comparable<ControlPointDSL> {
     }
 
     @Override
-    int compareTo(ControlPointDSL o) {
+    int compareTo(ControlPoint o) {
         return date <=> o.date
     }
 }
