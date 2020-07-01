@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Formatter;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.AcceptedTask;
-import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.ControlPoint;
+import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Checkpoint;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Group;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Lesson;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Student;
-import ru.nsu.fit.g18214.yakovlev.gradle.Gradle;
+import ru.nsu.fit.g18214.yakovlev.gradle.GradleException;
 import ru.nsu.fit.g18214.yakovlev.gradle.GradleService;
+import ru.nsu.fit.g18214.yakovlev.gradle.GradleStub;
+import ru.nsu.fit.g18214.yakovlev.gradle.TestsResults;
 
 public class PerformanceReport implements Command {
 
@@ -90,7 +92,7 @@ public class PerformanceReport implements Command {
 
 
   private String[] fillInfoForStudent(Student student, Group group) {
-    GradleService gradleService = new Gradle();
+    GradleService gradleService = new GradleStub();
     String[] studentData = new String[utils.getTasksCount() * utils.getHeadersLength()
       + 2 // one for name and the second one - total result
       + utils.getControlsCount()];
@@ -99,36 +101,43 @@ public class PerformanceReport implements Command {
 
     //Filling information for the every accepted task.
     for (String taskName : student.getAcceptedTasks().keySet()) {
-      studentData[j] =
-        gradleService.buildTask(taskName, student)
-          ? "+"
-          : "-";
-      j++;
+      try {
+        studentData[j] =
+          gradleService.buildTask(taskName, student).size() == 0
+            ? "+"
+            : "-";
+        j++;
 
-      studentData[j] =
-        gradleService.checkcodestyle(taskName, student)
-          ? "+"
-          : "-";
-      j++;
+        studentData[j] =
+          gradleService.checkCodeStyle(taskName, student).size() == 0
+            ? "+"
+            : "-";
+        j++;
 
-      studentData[j] =
-        gradleService.generateDocs(taskName, student)
-          ? "+"
-          : "-";
-      j++;
+        studentData[j] =
+          gradleService.generateDocs(taskName, student).size() == 0
+            ? "+"
+            : "-";
+        j++;
 
-      Formatter formatter = new Formatter();
-      int[] testsResults = gradleService.runTests(taskName, student);
-      formatter.format("%d/%d/%d", testsResults[0], testsResults[1], testsResults[2]);
-      studentData[j] = formatter.toString();
-      j++;
+        Formatter formatter = new Formatter();
+        TestsResults testsResults = gradleService.runTests(taskName, student);
+        formatter.format("%d/%d/%d",
+          testsResults.getSuccTests(),
+          testsResults.getSkipedTests(),
+          testsResults.getFailedTests());
+        studentData[j] = formatter.toString();
+        j++;
 
-      studentData[j] = student.getAcceptedTasks()
-        .get(taskName)
-        .getPointForTask()
-        .toString();
+        studentData[j] = student.getAcceptedTasks()
+          .get(taskName)
+          .getPointForTask()
+          .toString();
 
-      j++;
+        j++;
+      } catch (GradleException e) {
+        assert false;
+      }
     }
     double sumOfControlPointsGrades = 0;
     if (j <= utils.getHeadersLength() * utils.getTasksCount()) {
@@ -136,22 +145,22 @@ public class PerformanceReport implements Command {
     }
 
     //Filling information for the control points.
-    for (ControlPoint controlPoint : utils.getControls()) {
+    for (Checkpoint checkPoint : utils.getControls()) {
       int pointsUntilControlPoint = 0;
       for (String taskName : student.getAcceptedTasks().keySet()) {
         AcceptedTask acceptedTask = student.getAcceptedTasks().get(taskName);
-        if (acceptedTask.getDateWhenWasAccepted().compareTo(controlPoint.getDate()) <= 0) {
+        if (acceptedTask.getDateWhenWasAccepted().compareTo(checkPoint.getDate()) <= 0) {
           pointsUntilControlPoint += acceptedTask.getPointForTask();
         } else {
           break;
         }
       }
       int grade = 2;
-      if (pointsUntilControlPoint >= controlPoint.getPointsForExcGrade()) {
+      if (pointsUntilControlPoint >= checkPoint.getExc()) {
         grade = 5;
-      } else if (pointsUntilControlPoint >= controlPoint.getPointsForGoodGrade()) {
+      } else if (pointsUntilControlPoint >= checkPoint.getGood()) {
         grade = 4;
-      } else if (pointsUntilControlPoint >= controlPoint.getPointsForSatGrade()) {
+      } else if (pointsUntilControlPoint >= checkPoint.getSat()) {
         grade = 3;
       }
       Formatter formatter = new Formatter();

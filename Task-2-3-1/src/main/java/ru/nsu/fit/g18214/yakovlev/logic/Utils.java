@@ -5,13 +5,14 @@ import java.util.Formatter;
 import java.util.GregorianCalendar;
 import java.util.Set;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Config;
-import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.ControlPoint;
+import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Checkpoint;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Group;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Lesson;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Student;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Task;
-import ru.nsu.fit.g18214.yakovlev.git.Github;
-import ru.nsu.fit.g18214.yakovlev.git.GithubService;
+import ru.nsu.fit.g18214.yakovlev.git.GitException;
+import ru.nsu.fit.g18214.yakovlev.git.GitService;
+import ru.nsu.fit.g18214.yakovlev.git.GitStub;
 
 class Utils {
   private final String[] headers;
@@ -78,17 +79,21 @@ class Utils {
   }
 
   void checkAttendance(Group group) {
-    GithubService github = new Github();
+    GitService github = new GitStub();
     for (Lesson lesson : group.getLessons()) {
       Calendar calendar = new GregorianCalendar();
       calendar.setTime(lesson.getDate());
       calendar.roll(Calendar.DAY_OF_MONTH, 7);
       for (Student student : group.getStudents()) {
         if (!lesson.getAttendance().containsKey(student.getId())) {
-          if (github.countCommitsNumber(student.getRepoUrl(), calendar.getTime(), lesson.getDate()) > 1) {
-            lesson.getAttendance().put(student.getId(), true);
-          } else {
-            lesson.getAttendance().put(student.getId(), false);
+          try {
+            if (github.countCommitsNumber(student.getRepoUrl(), calendar.getTime(), lesson.getDate()) > 1) {
+              lesson.getAttendance().put(student.getId(), true);
+            } else {
+              lesson.getAttendance().put(student.getId(), false);
+            }
+          } catch (GitException e) {
+            assert false;
           }
         }
       }
@@ -107,7 +112,7 @@ class Utils {
     return headers.length;
   }
 
-  Set<ControlPoint> getControls() {
+  Set<Checkpoint> getControls() {
     return config.getControls();
   }
 

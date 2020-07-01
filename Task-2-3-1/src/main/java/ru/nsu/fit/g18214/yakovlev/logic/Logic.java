@@ -2,8 +2,10 @@ package ru.nsu.fit.g18214.yakovlev.logic;
 
 import java.io.Writer;
 import java.util.Map;
+import ru.nsu.fit.g18214.yakovlev.IllegalTaskException;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Config;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Student;
+import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Task;
 
 public class Logic implements CommandFactoty {
 
@@ -15,26 +17,26 @@ public class Logic implements CommandFactoty {
   }
 
   @Override
-  public Command findCommand(Config config, Map<String, String> args) {
+  public Command findCommand(Config config, Map<String, String> args) throws IllegalTaskException {
     Utils utils = new Utils(headers, config);
     switch (args.get("task")) {
       case "fullReport":
         if (!args.keySet().contains("-g")) {
-          throw new IllegalArgumentException();
+          throw new IllegalTaskException();
         }
         return new FullReport(Integer.parseInt(args.get("-g")),
           writer,
           utils);
       case "attendanceOnly":
         if (!args.keySet().contains("-g")) {
-          throw new IllegalArgumentException();
+          throw new IllegalTaskException();
         }
         return new AttendanceReport(Integer.parseInt(args.get("-g")),
           writer,
           utils);
       case "performanceOnly":
         if (!args.keySet().contains("-g")) {
-          throw new IllegalArgumentException();
+          throw new IllegalTaskException();
         }
         return new PerformanceReport(Integer.parseInt(args.get("-g")),
           writer,
@@ -43,11 +45,16 @@ public class Logic implements CommandFactoty {
         if (!args.keySet().contains("-g")
           || !args.keySet().contains("-s")
           || !args.keySet().contains("-t")) {
-          throw new IllegalArgumentException();
+          throw new IllegalTaskException();
         }
         for (Student student : utils.findGroup(Integer.parseInt(args.get("-g"))).getStudents()) {
           if (student.getId().equals(args.get("-s"))) {
-            return new CheckCodestyle(student, args.get("-t"), writer);
+            for (Task task : config.getTasks()) {
+              if (task.getName().equals(args.get("-t"))) {
+                return new CheckCodestyle(student, args.get("-t"), writer);
+              }
+            }
+            break;
           }
         }
         return null;
@@ -55,11 +62,16 @@ public class Logic implements CommandFactoty {
         if (!args.keySet().contains("-g")
           || !args.keySet().contains("-s")
           || !args.keySet().contains("-t")) {
-          throw new IllegalArgumentException();
+          throw new IllegalTaskException();
         }
         for (Student student : utils.findGroup(Integer.parseInt(args.get("-g"))).getStudents()) {
           if (student.getId().equals(args.get("-s"))) {
-            return new CheckTests(student, args.get("-t"), writer);
+            for (Task task : config.getTasks()) {
+              if (task.getName().equals(args.get("-t"))) {
+                return new CheckTests(student, args.get("-t"), writer);
+              }
+            }
+            break;
           }
         }
         return null;
@@ -67,11 +79,16 @@ public class Logic implements CommandFactoty {
         if (!args.keySet().contains("-g")
           || !args.keySet().contains("-s")
           || !args.keySet().contains("-t")) {
-          throw new IllegalArgumentException();
+          throw new IllegalTaskException();
         }
         for (Student student : utils.findGroup(Integer.parseInt(args.get("-g"))).getStudents()) {
           if (student.getId().equals(args.get("-s"))) {
-            return new CheckDocumentation(student, args.get("-t"), writer);
+            for (Task task : config.getTasks()) {
+              if (task.getName().equals(args.get("-t"))) {
+                return new CheckDocumentation(student, args.get("-t"), writer);
+              }
+            }
+            break;
           }
         }
         return null;
@@ -79,11 +96,16 @@ public class Logic implements CommandFactoty {
         if (!args.keySet().contains("-g")
           || !args.keySet().contains("-s")
           || !args.keySet().contains("-t")) {
-          throw new IllegalArgumentException();
+          throw new IllegalTaskException();
         }
         for (Student student : utils.findGroup(Integer.parseInt(args.get("-g"))).getStudents()) {
           if (student.getId().equals(args.get("-s"))) {
-            return new CheckBuild(student, args.get("-t"), writer);
+            for (Task task : config.getTasks()) {
+              if (task.getName().equals(args.get("-t"))) {
+                return new CheckBuild(student, args.get("-t"), writer);
+              }
+            }
+            break;
           }
         }
         return null;

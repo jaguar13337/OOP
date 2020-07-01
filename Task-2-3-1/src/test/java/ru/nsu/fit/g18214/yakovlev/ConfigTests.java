@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Config;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Engine;
-import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.ControlPoint;
+import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Checkpoint;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Group;
 
 public class ConfigTests {
@@ -38,11 +38,13 @@ public class ConfigTests {
         .getResource("config.nsu"))
         .getPath());
       Assert.assertEquals(1, config.getControls().size());
-      ControlPoint[] controlPoints = new ControlPoint[config.getControls().size()];
-      config.getControls().toArray(controlPoints);
+      Checkpoint[] checkpoints = new Checkpoint[config.getControls().size()];
+      config.getControls().toArray(checkpoints);
       Assert.assertEquals(new SimpleDateFormat("dd.MM.yyyy").parse("01.05.2020"),
-        controlPoints[0].getDate());
-      Assert.assertEquals(new Integer[]{2, 4, 6}, controlPoints[0].getGrades());
+        checkpoints[0].getDate());
+      Assert.assertEquals((Integer) 6, checkpoints[0].getExc());
+      Assert.assertEquals((Integer) 4, checkpoints[0].getGood());
+      Assert.assertEquals((Integer) 2, checkpoints[0].getSat());
     } catch (FileNotFoundException | ParseException ignored) {
       Assert.fail();
     }

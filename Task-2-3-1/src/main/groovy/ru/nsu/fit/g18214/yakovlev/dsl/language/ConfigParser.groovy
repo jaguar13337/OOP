@@ -5,7 +5,7 @@ import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.*
 
 import java.text.SimpleDateFormat
 
-abstract class Lang extends Script {
+abstract class ConfigParser extends Script {
 
     final String dateFormat = "dd.MM.yyyy"
 
@@ -70,18 +70,18 @@ abstract class Lang extends Script {
     }
 
     Closure control_point = {
-        ControlPoint control = new ControlPoint()
+        Checkpoint control = new Checkpoint()
         clMap = [sat: {
             Integer points ->
-                control.setPointsForSatGrade(points)
+                control.setSat(points)
                 clMap
         }, good     : {
             Integer points ->
-                control.setPointsForGoodGrade(points)
+                control.setGood(points)
                 clMap
         }, exc      : {
             Integer points ->
-                control.setPointsForExcGrade(points)
+                control.setExc(points)
                 clMap
         }, on       : {
             String date ->

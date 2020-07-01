@@ -1,13 +1,14 @@
 package ru.nsu.fit.g18214.yakovlev.gradle;
 
+import java.util.List;
 import ru.nsu.fit.g18214.yakovlev.dsl.engine.Model.Student;
 
 public interface GradleService {
-  int[] runTests(String taskName, Student student);
+  TestsResults runTests(String taskName, Student student) throws GradleException;
 
-  Boolean generateDocs(String taskName, Student student);
+  List<String> generateDocs(String taskName, Student student) throws GradleException;
 
-  Boolean buildTask(String taskName, Student student);
+  List<String> buildTask(String taskName, Student student) throws GradleException;
 
-  Boolean checkcodestyle(String taskName, Student student);
+  List<String> checkCodeStyle(String taskName, Student student) throws GradleException;
 }

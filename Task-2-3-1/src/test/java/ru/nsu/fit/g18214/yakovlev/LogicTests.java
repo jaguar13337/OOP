@@ -52,7 +52,7 @@ public class LogicTests {
       Assert.fail();
     } catch (FileNotFoundException e) {
       Assert.fail();
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalTaskException e) {
       Assert.assertTrue(true);
     }
   }
@@ -92,7 +92,7 @@ public class LogicTests {
       Assert.fail();
     } catch (FileNotFoundException e) {
       Assert.fail();
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalTaskException e) {
       Assert.assertTrue(true);
     }
   }
@@ -132,7 +132,7 @@ public class LogicTests {
       Assert.fail();
     } catch (FileNotFoundException e) {
       Assert.fail();
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalTaskException e) {
       Assert.assertTrue(true);
     }
   }
