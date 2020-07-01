@@ -1,0 +1,8 @@
+add group with_number 18214
+add student with_name "Arthur" with_id "ayakovlev" with_rep "reppp" to 18214
+add task with_name "Snake-2-2-1" with_number 5
+add control_point sat 2 good 4 exc 6 on "01.05.2020"
+add lesson for_group 18214 from "04.02.2020" to "31.02.2020" every 7
+add lesson for_group 18214 on "07.02.2020"
+accept "Snake-2-2-1" for_student "ayakovlev" on "29.05.2020" with 6
+present "ayakovlev" on "04.02.2020" in_group 18214
